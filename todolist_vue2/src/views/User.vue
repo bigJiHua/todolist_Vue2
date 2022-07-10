@@ -1,16 +1,15 @@
 <template>
-  <div id="" class="">
-  <h1>用户</h1>
+  <div id="" class="User">
+    <h1>用户</h1>
   </div>
 </template>
 
 <script>
-// 导入组件
-// import  from ''
+import Header from '@/components/Header/Header.vue'
 
 export default {
   props: [],
-  data () {
+  data() {
     return {}
   },
   // 生命周期初始化函数
@@ -18,7 +17,14 @@ export default {
   //
   // },
   // 方法
-  methods: {},
+  methods: {
+    toback() {
+      this.$router.push('/Home')
+    },
+    loginOuts() {
+      console.log('退出登录')
+    },
+  },
   // 监听器
   watch: {},
   // 当前组件的计算属性
@@ -29,10 +35,9 @@ export default {
   directives: {},
   name: 'User',
   components: {
-    // 导入组件
-  }
+    Header,
+  },
 }
 </script>
 
-<style lang="less" scoped>
-</style>
+<style lang="less" scoped></style>

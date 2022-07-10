@@ -8,9 +8,14 @@ const routes = [
   {
     path: '/',
     name: 'Home',
-    redirect: 'Home',
+    redirect: '/Home',
     component: Home
   },
+  {
+    path: '/Home',
+    name: 'Home',
+    component: Home
+  },,
   {
     path: '/User',
     name: 'User',
