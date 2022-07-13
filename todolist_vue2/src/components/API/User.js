@@ -1,20 +1,28 @@
-import request from "../request/request"
-
-const Login = function (data) {
-  const Params = new URLSearchParams()
-  Params.append('username', data.username)
-  Params.append('password', data.password)
-  return request.post('/my/login', Params)
+import request from '../request/request'
+const LoginMenu = function (username, password) {
+  const params = new URLSearchParams()
+  params.append('username', username)
+  params.append('password', password)
+  return request.post('/my/login', params, {
+    headers: {
+      'content-type': 'application/x-www-form-urlencoded'
+    }
+  })
 }
 
-const reguser = function (data) {
-  const Params = new URLSearchParams()
-  Params.append('username', data.username)
-  Params.append('password', data.password)
-  return request.post('/my/reguser', Params)
+// 新增用户
+const UpnewUser = function (userdata) {
+  console.log(userdata)
+  const params = new URLSearchParams()
+  params.append('username', userdata.username)
+  params.append('password', userdata.password)
+  return request.post('/my/reguser', params, {
+    headers: {
+      'content-type': 'application/x-www-form-urlencoded'
+    }
+  })
 }
-
 export default {
-  Login,
-  reguser
+  LoginMenu,
+  UpnewUser
 }

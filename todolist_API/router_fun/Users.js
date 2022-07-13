@@ -18,7 +18,8 @@ exports.user_login_API = (req, res) => {
         res.send({
             status: 200,
             message:'登录成功',
-            token: 'Bearer ' + tokenStr
+            token: 'Bearer ' + tokenStr,
+            data: user
         })
     })
 }

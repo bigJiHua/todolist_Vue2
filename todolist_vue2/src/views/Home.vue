@@ -96,6 +96,21 @@ export default {
       }
     },
     async delList(id) {
+      if (
+        this.$store.state.Login !== 0 &&
+        parseInt(localStorage.getItem('Login')) !== 0
+      ) {
+        const { data: res } = await getTodolist.delTodolist(data)
+        this.getlist()
+      } else {
+        const newArry = []
+        this.TodoList.forEach((item) => {
+          if (item.id !== id) {
+            newArry.push(item)
+          }
+        })
+        this.TodoList = newArry
+      }
     },
   },
   name: 'Home',
