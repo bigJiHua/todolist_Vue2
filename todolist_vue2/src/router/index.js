@@ -20,11 +20,6 @@ const routes = [
     path: '/User',
     name: 'User',
     component: () => import('../views/User.vue')
-  },
-  {
-    path: '/Search',
-    name: 'Search',
-    component: () => import('../views/Search.vue')
   }
 ]
 

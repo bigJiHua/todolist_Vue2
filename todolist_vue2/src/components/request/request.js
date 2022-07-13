@@ -19,11 +19,11 @@ axios.interceptors.response.use(function (response) {
 })
 
 const request = axios.create({
-  baseURL: 'http://localhost:3000',
-  // headers: {
-  //   'content-type': 'application/x-www-form-urlencoded',
-  //   Authorization: localStorage.getItem('token')
-  // }
+  baseURL: 'http://127.0.0.1',
+  headers: {
+    'content-type': 'application/x-www-form-urlencoded',
+    Authorization: localStorage.getItem('token')
+  }
 })
 
 export default request

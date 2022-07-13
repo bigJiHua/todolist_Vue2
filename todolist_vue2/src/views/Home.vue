@@ -3,11 +3,23 @@
     <div class="content_body" id="content_body">
       <h1>I Want todo</h1>
       <div class="inputArea">
-        <input type="text" class="inputBox" placeholder="输入要做的事" v-model="newTodo"/>
+        <input
+          type="text"
+          class="inputBox"
+          placeholder="输入要做的事"
+          v-model="newTodo"
+          @keydown.enter="addTodo"
+        />
         <button class="addBtn" @click="addTodo">添加</button>
       </div>
       <div class="todoList">
-        <todolist :isall="isall" v-for="(item,index) in TodoList" :key="index" :item="item"></todolist>
+        <todolist
+          :isall="isall"
+          v-for="(item, index) in TodoList"
+          :key="index"
+          :item="item"
+          @delList="delList"
+        ></todolist>
       </div>
     </div>
   </div>
@@ -21,30 +33,71 @@ export default {
   data() {
     return {
       isall: true,
-      TodoList: []
+      TodoList: [],
+      newTodo: '',
     }
   },
-  created () {
-    this.getlist()
+  created() {
+    if (
+      this.$store.state.Login !== 0 &&
+      parseInt(localStorage.getItem('Login')) !== 0
+    ) {
+      this.getlist()
+    } else {
+      this.TodoList = this.$store.state.todo
+      localStorage.setItem('Login', 0)
+    }
   },
   methods: {
-    async getlist () {
-      const { data:res } = await getTodolist.getTodolist()
-      this.TodoList = res
+    async getlist() {
+      const { data: res } = await getTodolist.getTodolist()
+      const dataArry = res
+      this.TodoList = dataArry.reverse()
     },
-    async addTodo () {
-      const { data: res } = await getTodolist.addTodolist()
-      console.log(res)
-    }
+    async addTodo() {
+      if (
+        this.$store.state.Login !== 0 &&
+        parseInt(localStorage.getItem('Login')) !== 0
+      ) {
+        await getTodolist.addTodolist(this.newTodo)
+        this.getlist()
+        this.newTodo = ''
+      } else {
+        if (this.newTodo !== '' && this.newTodo.length !== 0) {
+          const todo = {
+            id: this.TodoList.length + 1,
+            todo: this.newTodo,
+            upcoming: 0,
+          }
+          this.TodoList.push(todo)
+          this.$store.commit('todo', this.TodoList)
+          this.newTodo = ''
+        } else {
+          alert('輸入的值不能爲空哦！')
+        }
+      }
+    },
+    async getList(id) {
+      if (
+        this.$store.state.Login !== 0 &&
+        parseInt(localStorage.getItem('Login')) !== 0
+      ) {
+        const { data: res } = await getTodolist.delTodolist(id)
+        this.getlist()
+      }
+    },
+    async patchList() {
+      if (
+        this.$store.state.Login !== 0 &&
+        parseInt(localStorage.getItem('Login')) !== 0
+      ) {
+        const { data: res } = await getTodolist.putTodolist(data)
+        this.getlist()
+      }
+    },
+    async delList(id) {
+    },
   },
-  // 监听器
-  watch: {},
-  // 当前组件的计算属性
-  computed: {},
-  // 过滤器
-  filters: {},
-  // Vue 中自定义属性
-  directives: {},
   name: 'Home',
   components: {
     todolist,

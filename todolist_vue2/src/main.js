@@ -5,7 +5,12 @@ import store from './store'
 import Vant from 'vant';
 import 'vant/lib/index.css'
 import './assets/css/index.css'
-
+import VueTouch from 'vue-touch'
+VueTouch.registerCustomEvent('doubletap', {
+  type: 'tap',
+  taps: 2
+})
+Vue.use(VueTouch, {name: 'v-touch'})
 Vue.use(Vant)
 Vue.config.productionTip = true
 

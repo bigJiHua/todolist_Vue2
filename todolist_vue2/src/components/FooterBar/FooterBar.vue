@@ -1,9 +1,6 @@
 <template>
   <div id="" class="FooterBar">
     <van-tabbar v-model="active">
-      <van-tabbar-item icon="search">
-        <router-link to="/Search">搜索</router-link>
-      </van-tabbar-item>
       <van-tabbar-item icon="home-o">
         <router-link to="/Home">主页</router-link>
       </van-tabbar-item>

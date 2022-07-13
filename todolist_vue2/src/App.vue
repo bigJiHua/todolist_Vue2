@@ -1,6 +1,5 @@
 <template>
   <div id="APP" class="APP">
-    <Header class="Header"></Header>
     <router-view class="RView"></router-view>
     <FooterBar class="Footer"></FooterBar>
   </div>
@@ -8,12 +7,10 @@
 
 <script>
 import FooterBar from './components/FooterBar/FooterBar'
-import Header from './components/Header/Header'
 
 export default {
   name: 'APP',
   components: {
-    Header,
     FooterBar,
   },
 }
@@ -23,12 +20,9 @@ export default {
 * {
   margin: 0;
 }
-.Header {
-  height: 5vh;
-}
 .RView {
   position: relative;
-  height: 83vh;
+  height: 89.5vh;
   padding: 15px;
 }
 .Footer {

@@ -38,13 +38,12 @@ app.use(
     })
 )
 
-
-app.get('/api', (req, res) => {
-    res.send({
-        status : 200,
-        message: 'Hello world'
-    })
-})
+const todo_router = require('./router/todo')
+const Uers_router = require('./router/Users')
+// api 获取数据
+app.use('/api',todo_router)
+// my 登录 注册
+app.use('/my',Uers_router)
 
 
 
