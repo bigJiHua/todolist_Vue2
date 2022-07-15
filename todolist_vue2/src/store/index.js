@@ -7,17 +7,18 @@ export default new Vuex.Store({
   state: {
     Login: parseInt(localStorage.getItem('Login')),
     token: localStorage.getItem('token'),
-    todo: []
+    Upload: parseInt(localStorage.getItem('Upload')) === 0 ? false : true,
+    todo: [],
   },
-  getters: {
-  },
+  getters: {},
   mutations: {
     todo(state, todo) {
       state.todo = todo
-    }
+    },
+    Upload(state, Up) {
+      state.Upload = Up
+    },
   },
-  actions: {
-  },
-  modules: {
-  }
+  actions: {},
+  modules: {},
 })

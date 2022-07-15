@@ -30,10 +30,10 @@
       </div>
     </div>
     <!-- 操作面板 -->
-    <van-cell-group class="action-card">
-      <van-cell icon="warning-o" center title="是否上传到云端" v-if="isLogin">
+    <van-cell-group class="action-card" v-if="isLogin">
+      <van-cell icon="warning-o" center title="是否上传到云端">
         <template #right-icon>
-          <van-switch v-model="checked" size="24" @click="toUpload" />
+          <van-switch :value="checked" size="24" @click="toUpload" />
         </template>
       </van-cell>
       <van-cell icon="warning-o" title="退出登录" @click="logout" />
@@ -42,16 +42,19 @@
 </template>
 
 <script>
+import Upload from '@/components/API/getTodoList'
 export default {
   props: [],
   data() {
     return {
       isLogin: localStorage.getItem('Username') ? true : false,
       User: localStorage.getItem('Username'),
-      checked: parseInt(localStorage.getItem('Upload')) === 0 ? false : true,
+      checked: false,
     }
   },
-  created() {},
+  created() {
+    this.checked = parseInt(localStorage.getItem('Upload')) === 0 ? false : true
+  },
   method() {},
   methods: {
     logout() {
@@ -62,25 +65,77 @@ export default {
       ) {
         alert('请登录后再试吧!')
       } else {
-        const condel = confirm('确定退出登录吗？')
-        if (condel) {
-          localStorage.removeItem('token')
-          localStorage.removeItem('Username')
-          localStorage.setItem('Login', 0)
-          location.reload()
-        }
+        this.$dialog
+          .confirm({
+            message: '确定退出登录吗？',
+          })
+          .then(() => {
+            localStorage.removeItem('token')
+            localStorage.removeItem('Username')
+            localStorage.setItem('Login', 0)
+            location.reload()
+          })
       }
     },
     async toUpload() {
-      // TODO 有Bug
-      const condel = confirm('开启上传云端后最多只能存放10条数据哦!')
-      if (condel) {
-        this.checked = true
-        localStorage.getItem('Upload', 1)
+      if (!this.checked) {
+        this.$dialog
+          .confirm({
+            message: '开启上传云端后最多只能存放10条数据哦',
+          })
+          .then(() => {
+            this.checked = true
+            this.$store.commit('Upload', this.checked)
+            localStorage.setItem('Upload', 1)
+            this.Upload()
+            if (this.$store.state.todo.length !== 0) {
+              this.$dialog
+                .confirm({
+                  message: '当前检测到代办列表有值，是否立即上传?',
+                })
+                .then(() => {
+                  this.uploadd(this.$store.state.todo)
+                })
+                .catch(() => {})
+            }
+          })
+          .catch(() => {
+            this.checked = false
+          })
       } else {
-        this.checked = false
-        console.log(this.checked)
-        localStorage.getItem('Upload', 0)
+        this.$dialog
+          .confirm({
+            message: '确定取消上传云端吗？',
+          })
+          .then(() => {
+            this.checked = false
+            this.$store.commit('Upload', this.checked)
+            localStorage.setItem('Upload', 0)
+            this.Upload()
+          })
+          .catch(() => {
+            this.checked = true
+          })
+      }
+    },
+    async uploadd(todo) {
+      const { data: res } = await Upload.addTodolist(todo)
+      if (res.status === 200) {
+        this.$notify({
+          message: res.message,
+          type: 'success',
+          duration: 1000,
+        })
+      }
+    },
+    async Upload() {
+      const { data: res } = await Upload.setUpload()
+      if (res.status === 200) {
+        this.$notify({
+          message: res.message,
+          type: 'success',
+          duration: 1000,
+        })
       }
     },
   },

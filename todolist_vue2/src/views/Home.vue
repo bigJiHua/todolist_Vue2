@@ -35,6 +35,7 @@ export default {
       isall: true,
       TodoList: [],
       newTodo: '',
+      checkupl: false,
     }
   },
   created() {
@@ -43,47 +44,85 @@ export default {
       parseInt(localStorage.getItem('Login')) !== 0
     ) {
       this.getlist()
+      if (this.$store.state.todo.length !== 0) {
+        this.TodoList = this.$store.state.todo
+      }
+      if (!this.$store.state.Upload) {
+        setTimeout(() => {
+          this.$notify({
+            message: '当前读取的是本地代办，刷新页面将会丢失',
+            type: 'warning',
+            duration: 1800,
+          })
+        }, 2000)
+      }
     } else {
       this.TodoList = this.$store.state.todo
-      localStorage.setItem('Login', 0)
+    }
+    if (
+      this.$store.state.Login !== 0 &&
+      parseInt(localStorage.getItem('Login')) !== 0 &&
+      this.$store.state.Upload &&
+      parseInt(localStorage.getItem('Upload')) !== 0
+    ) {
+      this.checkupl = true
+    } else {
+      this.checkupl = false
     }
   },
   methods: {
     async getlist() {
       const { data: res } = await getTodolist.getTodolist()
-      const dataArry = res
-      this.TodoList = dataArry.reverse()
-    },
-    async addTodo() {
-      if (
-        this.$store.state.Login !== 0 &&
-        parseInt(localStorage.getItem('Login')) !== 0
-      ) {
-        await getTodolist.addTodolist(this.newTodo)
-        this.getlist()
-        this.newTodo = ''
+      if (res.status !== 406) {
+        this.$notify({
+          message: res.message,
+          type: 'success',
+          duration: 1000,
+        })
+        console.log(res)
+        const dataArry = res.data
+        this.TodoList = dataArry.reverse()
+        this.$store.commit('todo', res.data)
       } else {
-        if (this.newTodo !== '' && this.newTodo.length !== 0) {
-          const todo = {
-            id: this.TodoList.length + 1,
-            todo: this.newTodo,
-            upcoming: 0,
-          }
-          this.TodoList.push(todo)
-          this.$store.commit('todo', this.TodoList)
-          this.newTodo = ''
-        } else {
-          alert('輸入的值不能爲空哦！')
-        }
+        this.$notify({
+          message: res.message,
+          type: 'primary',
+          duration: 1000,
+        })
       }
     },
-    async getList(id) {
-      if (
-        this.$store.state.Login !== 0 &&
-        parseInt(localStorage.getItem('Login')) !== 0
-      ) {
-        const { data: res } = await getTodolist.delTodolist(id)
-        this.getlist()
+    addTodo() {
+      if (this.newTodo !== '' && this.newTodo.length !== 0) {
+        const todo = {
+          todo: this.newTodo,
+          upcoming: 0,
+        }
+        this.TodoList.push(todo)
+        this.$store.commit('todo', this.TodoList)
+        this.newTodo = ''
+        setTimeout(async () => {
+          if (this.checkupl) {
+            const { data: res } = await getTodolist.addTodolist(todo)
+            console.log(res)
+            if (res.status === 200) {
+              this.$notify({
+                message: res.message,
+                type: 'success',
+                duration: 1000,
+              })
+              this.getlist()
+            } else {
+              this.$notify({
+                message: res.message,
+                type: 'danger',
+                duration: 1000,
+              })
+              this.getlist()
+            }
+          }
+        }, 800)
+      } else {
+        alert('輸入的值不能爲空哦！')
       }
     },
     async patchList() {

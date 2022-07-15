@@ -84,6 +84,8 @@ export default {
   width: 100%;
   font-weight: 500;
   font-size: 1.2rem;
+  overflow: overlay;
+  padding: 0 5px;
 }
 .cag{
   padding: 10px;
