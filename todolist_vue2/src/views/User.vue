@@ -16,15 +16,15 @@
       <!-- 动态、关注、粉丝 -->
       <div class="user-data">
         <div class="user-data-item">
-          <span>0</span>
+          <span>{{$store.state.todoCount.finishi}}</span>
           <span>代办</span>
         </div>
         <div class="user-data-item">
-          <span>0</span>
+          <span>{{$store.state.todoCount.upcoming}}</span>
           <span>已完成</span>
         </div>
         <div class="user-data-item">
-          <span>0</span>
+          <span>{{$store.state.todoCount.is_delete}}</span>
           <span>删除</span>
         </div>
       </div>
@@ -70,9 +70,8 @@ export default {
             message: '确定退出登录吗？',
           })
           .then(() => {
-            localStorage.removeItem('token')
-            localStorage.removeItem('Username')
-            localStorage.setItem('Login', 0)
+            localStorage.clear()
+            this.$router.push('/Home')
             location.reload()
           })
       }
@@ -89,12 +88,18 @@ export default {
             localStorage.setItem('Upload', 1)
             this.Upload()
             if (this.$store.state.todo.length !== 0) {
+              const newList = []
+              this.$store.state.todo.forEach((item, index) => {
+                if (index < 10) {
+                  newList.push(item)
+                }
+              })
               this.$dialog
                 .confirm({
                   message: '当前检测到代办列表有值，是否立即上传?',
                 })
                 .then(() => {
-                  this.uploadd(this.$store.state.todo)
+                  this.uploadd(newList)
                 })
                 .catch(() => {})
             }
@@ -126,7 +131,13 @@ export default {
           type: 'success',
           duration: 1000,
         })
-      }
+      } else if (res.status === 406) {
+        this.$notify({
+          message: res.message,
+          type: 'warning',
+          duration: 1500,
+        })
+      } 
     },
     async Upload() {
       const { data: res } = await Upload.setUpload()

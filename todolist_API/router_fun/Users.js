@@ -15,11 +15,27 @@ exports.user_login_API = (req, res) => {
         if(!compareResult) return res.cc('登录失败 密码错误 !',401)
         const user = { ...results[0], password: ''}
         const tokenStr = jwt.sign(user, config.jwtSecretKey, { expiresIn: config.expiresIn })
-        res.send({
-            status: 200,
-            message:'登录成功',
-            token: 'Bearer ' + tokenStr,
-            data: user
+        const sql = `select * from ev_todo where username=?`
+        db.query(sql,userinfo.username, (err,results) => {
+            if(err) return res.send({
+                status: 200,
+                message:'登录成功,查询出现错误',
+                token: 'Bearer ' + tokenStr,
+                data: user
+            })
+            if(results.length === 0) return  res.send({
+                status: 200,
+                message:'登录成功，查询出现错误',
+                token: 'Bearer ' + tokenStr,
+                data: user
+            })
+            res.send({
+                status: 200,
+                message:'登录成功',
+                token: 'Bearer ' + tokenStr,
+                data: user,
+                count: results
+            })
         })
     })
 }

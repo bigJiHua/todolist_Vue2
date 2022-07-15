@@ -1,7 +1,7 @@
 <template>
   <div class="list_item">
     <div class="showArea">
-      <input type="checkbox" class="Chekbox" v-model="check" @click="checkOk(item)" />
+      <input type="checkbox" class="Chekbox" v-model="check" @click="checkOk(item.id)" />
       <v-touch class="things" v-on:doubletap="cagList($event)" v-if="!isCag">{{item.todo}}</v-touch>
       <div class="things" v-if="isCag"><input type="text" v-model="item.todo" class="cag"></div>
       <span class="del_item" @click="delItem(item.id)">&times;</span>
@@ -29,8 +29,9 @@ export default {
     }
   },
   methods: {
-    checkOk(item) {
-      console.log('Check' + item)
+    checkOk(id) {
+      console.log('Check' + id)
+      this.isCag = false
     },
     delItem(id) {
       this.$emit('delList', id)

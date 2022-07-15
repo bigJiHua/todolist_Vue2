@@ -13,13 +13,19 @@
         <button class="addBtn" @click="addTodo">添加</button>
       </div>
       <div class="todoList">
-        <todolist
-          :isall="isall"
-          v-for="(item, index) in TodoList"
-          :key="index"
-          :item="item"
-          @delList="delList"
-        ></todolist>
+        <van-pull-refresh
+          v-model="loading"
+          success-text="刷新成功"
+          @refresh="onRefresh"
+        >
+          <todolist
+            :isall="isall"
+            v-for="(item, index) in TodoList"
+            :key="index"
+            :item="item"
+            @delList="delList"
+          ></todolist>
+        </van-pull-refresh>
       </div>
     </div>
   </div>
@@ -36,21 +42,21 @@ export default {
       TodoList: [],
       newTodo: '',
       checkupl: false,
+      loading: false,
+      count: 0,
     }
   },
   created() {
-    if (
-      this.$store.state.Login !== 0 &&
-      parseInt(localStorage.getItem('Login')) !== 0
-    ) {
+    if (this.$store.state.Login !== 0 && localStorage.getItem('Login')) {
       this.getlist()
       if (this.$store.state.todo.length !== 0) {
         this.TodoList = this.$store.state.todo
       }
-      if (!this.$store.state.Upload) {
+      this.count++
+      if (!this.$store.state.Upload && this.count <= 1) {
         setTimeout(() => {
           this.$notify({
-            message: '当前读取的是本地代办，刷新页面将会丢失',
+            message: '当前未开启上传云端，刷新页面 后添加的数据会丢失',
             type: 'warning',
             duration: 1800,
           })
@@ -59,9 +65,12 @@ export default {
     } else {
       this.TodoList = this.$store.state.todo
     }
+    // 检查是否符合上传资格
     if (
       this.$store.state.Login !== 0 &&
       parseInt(localStorage.getItem('Login')) !== 0 &&
+      localStorage.getItem('Login') &&
+      localStorage.getItem('Upload') &&
       this.$store.state.Upload &&
       parseInt(localStorage.getItem('Upload')) !== 0
     ) {
@@ -79,7 +88,6 @@ export default {
           type: 'success',
           duration: 1000,
         })
-        console.log(res)
         const dataArry = res.data
         this.TodoList = dataArry.reverse()
         this.$store.commit('todo', res.data)
@@ -97,13 +105,9 @@ export default {
           todo: this.newTodo,
           upcoming: 0,
         }
-        this.TodoList.push(todo)
-        this.$store.commit('todo', this.TodoList)
-        this.newTodo = ''
         setTimeout(async () => {
           if (this.checkupl) {
             const { data: res } = await getTodolist.addTodolist(todo)
-            console.log(res)
             if (res.status === 200) {
               this.$notify({
                 message: res.message,
@@ -111,15 +115,17 @@ export default {
                 duration: 1000,
               })
               this.getlist()
-            } else {
+            } else if (res.status === 406) {
               this.$notify({
                 message: res.message,
                 type: 'danger',
                 duration: 1000,
               })
-              this.getlist()
             }
           }
+          this.TodoList.push(todo)
+          this.$store.commit('todo', this.TodoList)
+          this.newTodo = ''
         }, 800)
       } else {
         alert('輸入的值不能爲空哦！')
@@ -150,6 +156,10 @@ export default {
         })
         this.TodoList = newArry
       }
+    },
+    onRefresh() {
+      this.getlist()
+      this.loading = false
     },
   },
   name: 'Home',

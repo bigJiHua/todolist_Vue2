@@ -56,7 +56,7 @@ exports.addtodolist = (req,res) => {
                         })
                     })
                 } else {
-                    return res.cc('云端数据超过限制，无法再上传啦')
+                    return res.cc('云端数据超过限制，无法再上传啦',406)
                 }
             })
         } else {

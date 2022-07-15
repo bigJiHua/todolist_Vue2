@@ -15,7 +15,7 @@
             class="form-control login_input"
             placeholder="请输入用户名"
             require
-          /><br/>
+          /><br />
           <label for="al_title" class="login_lable"> 密码:</label>
           <input
             type="password"
@@ -28,7 +28,9 @@
         </form>
         <div class="btnmenu">
           <van-button @click="register" class="Loginbtn">注册</van-button>
-          <van-button @click="login" v-show="!loading" class="Loginbtn">登录</van-button>
+          <van-button @click="login" v-show="!loading" class="Loginbtn"
+            >登录</van-button
+          >
           <van-button
             loading
             type="primary"
@@ -47,7 +49,7 @@
 import PostLogin from '@/components/API/User'
 
 export default {
-  data () {
+  data() {
     return {
       username: 'test01',
       password: '123456aaa',
@@ -58,17 +60,17 @@ export default {
       rules: {
         username: {
           rule: /^\S/,
-          msg: '用户名不能为空!且长度为6-12位'
+          msg: '用户名不能为空!且长度为6-12位',
         },
         password: {
           rule: /^\S{6,12}/,
-          msg: '密码不能为空!且长度为6-12位'
-        }
-      }
+          msg: '密码不能为空!且长度为6-12位',
+        },
+      },
     }
   },
   methods: {
-    async login () {
+    async login() {
       // 验证是否已经拥有token
       if (!localStorage.getItem('token')) {
         // 验证输入的用户名是否合法
@@ -85,7 +87,22 @@ export default {
             this.loading = true
             // 判断返回状态码是否成功
             if (res.status === 200) {
-              console.log(res.data)
+              const todoCount = {
+                finishi: 0,
+                upcoming: 0,
+                is_delete: 0,
+              }
+              const num = res.count
+              num.forEach((item) => {
+                if (item.finishi === 0) {
+                  todoCount.finishi += 1
+                } else if (item.upcoming != 0) {
+                  todoCount.finishi += 1
+                } else if (item.is_delete != 0) {
+                  todoCount.is_delete += 1
+                }
+              })
+              localStorage.setItem('Count', JSON.stringify(todoCount))
               localStorage.setItem('Login', 1)
               localStorage.setItem('token', res.token)
               localStorage.setItem('Username', res.data.username)
@@ -120,7 +137,7 @@ export default {
         }, this.setTime)
       }
     },
-    register () {
+    register() {
       // 打开开关
       this.show = true
       this.loading = true
@@ -138,7 +155,7 @@ export default {
         this.$router.push('/register')
       }
     },
-    validata (key) {
+    validata(key) {
       let bool = true
       if (!this.rules[key].rule.test(this[key])) {
         this.show = true
@@ -148,7 +165,7 @@ export default {
       }
       return bool
     },
-    showPopup (msg) {
+    showPopup(msg) {
       const timer = setInterval(() => {
         this.show = true
         this.msg = msg
@@ -159,11 +176,11 @@ export default {
         this.loading = false
       }, this.setTime)
     },
-    toback () {
+    toback() {
       this.$router.back()
-    }
+    },
   },
-  name: 'LoginPage'
+  name: 'LoginPage',
 }
 </script>
 
@@ -277,10 +294,10 @@ export default {
   align-items: center;
   justify-content: space-around;
 }
-  .Loginbtn{
-    width: 5rem;
-  }
-  .popup{
-    padding: 10px;
-  }
+.Loginbtn {
+  width: 5rem;
+}
+.popup {
+  padding: 10px;
+}
 </style>
