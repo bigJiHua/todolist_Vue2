@@ -24,6 +24,7 @@
             :key="index"
             :item="item"
             @delList="delList"
+            @cagList="patchList"
           ></todolist>
         </van-pull-refresh>
       </div>
@@ -47,37 +48,9 @@ export default {
     }
   },
   created() {
-    if (this.$store.state.Login !== 0 && localStorage.getItem('Login')) {
-      this.getlist()
-      if (this.$store.state.todo.length !== 0) {
-        this.TodoList = this.$store.state.todo
-      }
-      this.count++
-      if (!this.$store.state.Upload && this.count <= 1) {
-        setTimeout(() => {
-          this.$notify({
-            message: '当前未开启上传云端，刷新页面 后添加的数据会丢失',
-            type: 'warning',
-            duration: 1800,
-          })
-        }, 2000)
-      }
-    } else {
-      this.TodoList = this.$store.state.todo
-    }
+    this.getlist()
     // 检查是否符合上传资格
-    if (
-      this.$store.state.Login !== 0 &&
-      parseInt(localStorage.getItem('Login')) !== 0 &&
-      localStorage.getItem('Login') &&
-      localStorage.getItem('Upload') &&
-      this.$store.state.Upload &&
-      parseInt(localStorage.getItem('Upload')) !== 0
-    ) {
-      this.checkupl = true
-    } else {
-      this.checkupl = false
-    }
+    this.checkuplsc()
   },
   methods: {
     async getlist() {
@@ -131,13 +104,20 @@ export default {
         alert('輸入的值不能爲空哦！')
       }
     },
-    async patchList() {
-      if (
-        this.$store.state.Login !== 0 &&
-        parseInt(localStorage.getItem('Login')) !== 0
-      ) {
-        const { data: res } = await getTodolist.putTodolist(data)
-        this.getlist()
+    async patchList(data) {
+      const { data: res } = await getTodolist.putTodolist(data)
+      if (res.status === 200) {
+        this.$notify({
+          message: res.message,
+          type: 'success',
+          duration: 1000,
+        })
+      } else if (res.status === 406) {
+        this.$notify({
+          message: res.message,
+          type: 'danger',
+          duration: 1000,
+        })
       }
     },
     async delList(id) {
@@ -160,6 +140,20 @@ export default {
     onRefresh() {
       this.getlist()
       this.loading = false
+    },
+    checkuplsc() {
+      if (
+        this.$store.state.Login !== 0 &&
+        parseInt(localStorage.getItem('Login')) !== 0 &&
+        localStorage.getItem('Login') &&
+        localStorage.getItem('Upload') &&
+        this.$store.state.Upload &&
+        parseInt(localStorage.getItem('Upload')) !== 0
+      ) {
+        this.checkupl = true
+      } else {
+        this.checkupl = false
+      }
     },
   },
   name: 'Home',

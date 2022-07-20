@@ -16,24 +16,29 @@
       <!-- 动态、关注、粉丝 -->
       <div class="user-data">
         <div class="user-data-item">
-          <span>{{$store.state.todoCount.finishi}}</span>
+          <span>{{ this.$store.state.todoCount | finishi }}</span>
           <span>代办</span>
         </div>
         <div class="user-data-item">
-          <span>{{$store.state.todoCount.upcoming}}</span>
+          <span>{{ this.$store.state.todoCount | upcoming }}</span>
           <span>已完成</span>
         </div>
         <div class="user-data-item">
-          <span>{{$store.state.todoCount.is_delete}}</span>
+          <span>{{ this.$store.state.todoCount | is_delete }}</span>
           <span>删除</span>
         </div>
       </div>
     </div>
     <!-- 操作面板 -->
     <van-cell-group class="action-card" v-if="isLogin">
-      <van-cell icon="warning-o" center title="是否上传到云端">
+      <van-cell icon="upgrade" center title="是否上传到云端">
         <template #right-icon>
           <van-switch :value="checked" size="24" @click="toUpload" />
+        </template>
+      </van-cell>
+      <van-cell icon="records" center title="是否双击修改">
+        <template #right-icon>
+          <van-switch :value="change" size="24" @click="toChange" />
         </template>
       </van-cell>
       <van-cell icon="warning-o" title="退出登录" @click="logout" />
@@ -42,18 +47,24 @@
 </template>
 
 <script>
-import Upload from '@/components/API/getTodoList'
+import Setting from '@/components/API/getTodoList'
 export default {
   props: [],
   data() {
     return {
       isLogin: localStorage.getItem('Username') ? true : false,
       User: localStorage.getItem('Username'),
-      checked: false,
+      checked: this.$store.state.Upload,
+      change: this.$store.state.toChange,
     }
   },
   created() {
-    this.checked = parseInt(localStorage.getItem('Upload')) === 0 ? false : true
+    if (
+      localStorage.getItem('Username') === '' &&
+      localStorage.getItem('token') === ''
+    ) {
+      this.overLogin()
+    }
   },
   method() {},
   methods: {
@@ -71,7 +82,7 @@ export default {
           })
           .then(() => {
             localStorage.clear()
-            this.$router.push('/Home')
+            this.$router.push('/')
             location.reload()
           })
       }
@@ -89,7 +100,8 @@ export default {
             this.Upload()
             if (this.$store.state.todo.length !== 0) {
               const newList = []
-              this.$store.state.todo.forEach((item, index) => {
+              const data = this.$store.state.todo
+              data.forEach((item, index) => {
                 if (index < 10) {
                   newList.push(item)
                 }
@@ -123,24 +135,14 @@ export default {
           })
       }
     },
-    async uploadd(todo) {
-      const { data: res } = await Upload.addTodolist(todo)
-      if (res.status === 200) {
-        this.$notify({
-          message: res.message,
-          type: 'success',
-          duration: 1000,
-        })
-      } else if (res.status === 406) {
-        this.$notify({
-          message: res.message,
-          type: 'warning',
-          duration: 1500,
-        })
-      } 
-    },
-    async Upload() {
-      const { data: res } = await Upload.setUpload()
+    async toChange() {
+      this.change = !this.change
+      if (this.change) {
+        localStorage.setItem('toChange', 1)
+      } else {
+        localStorage.setItem('toChange', 0)
+      }
+      const { data: res } = await Setting.setSetting('toChange',localStorage.getItem('toChange'))
       if (res.status === 200) {
         this.$notify({
           message: res.message,
@@ -149,10 +151,70 @@ export default {
         })
       }
     },
+    async uploadd(todo) {
+      if (todo !== undefined) {
+        const { data: res } = await Upload.addTodolist(todo)
+        if (res.status === 200) {
+          this.$notify({
+            message: res.message,
+            type: 'success',
+            duration: 1000,
+          })
+        } else if (res.status === 406) {
+          this.$notify({
+            message: res.message,
+            type: 'warning',
+            duration: 1500,
+          })
+        }
+      } else {
+        this.$notify({
+          message: 'undefined',
+          type: 'warning',
+          duration: 1500,
+        })
+      }
+    },
+    async Upload() {
+      const { data: res } = await Setting.setSetting('upload',localStorage.getItem('Upload'))
+      if (res.status === 200) {
+        this.$notify({
+          message: res.message,
+          type: 'success',
+          duration: 1000,
+        })
+      }
+    },
+    overLogin() {
+      localStorage.clear()
+      this.$router.push('/Login')
+    },
   },
   watch: {},
   computed: {},
-  filters: {},
+  filters: {
+    finishi(val) {
+      if (localStorage.getItem('Count')) {
+        return val.finishi
+      } else {
+        return 0
+      }
+    },
+    upcoming(val) {
+      if (localStorage.getItem('Count')) {
+        return val.upcoming
+      } else {
+        return 0
+      }
+    },
+    is_delete(val) {
+      if (localStorage.getItem('Count')) {
+        return val.is_delete
+      } else {
+        return 0
+      }
+    },
+  },
   name: 'User',
   components: {},
 }

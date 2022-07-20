@@ -107,6 +107,7 @@ export default {
               localStorage.setItem('token', res.token)
               localStorage.setItem('Username', res.data.username)
               localStorage.setItem('Upload', res.data.upload)
+              localStorage.setItem('toChange', res.data.toChange)
               this.$store.commit('Upload', res.data.upload)
               const timer = setInterval(() => {
                 this.msg = res.message
@@ -116,6 +117,7 @@ export default {
                 this.show = false
                 this.loading = false
                 this.$router.push('/User')
+                location.reload()
               }, this.setTime)
             } else {
               this.showPopup(res.message)

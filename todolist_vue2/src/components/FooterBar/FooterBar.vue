@@ -2,7 +2,7 @@
   <div id="" class="FooterBar">
     <van-tabbar v-model="active">
       <van-tabbar-item icon="home-o">
-        <router-link to="/Home">主页</router-link>
+        <router-link to="/">主页</router-link>
       </van-tabbar-item>
       <van-tabbar-item icon="user-o">
         <router-link to="/User">我的</router-link>

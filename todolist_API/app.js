@@ -54,5 +54,5 @@ app.use((err, req, res, next) => {
 })
 //     监听项目端口，运行时要修改
 app.listen(setting.kuo, () => {
-    console.log('server Open ')
+    console.log('server Open ' + setting.pub_date + ' ' + new Date())
 })

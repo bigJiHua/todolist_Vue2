@@ -2,8 +2,8 @@
   <div class="list_item">
     <div class="showArea">
       <input type="checkbox" class="Chekbox" v-model="check" @click="checkOk(item.id)" />
-      <v-touch class="things" v-on:doubletap="cagList($event)" v-if="!isCag">{{item.todo}}</v-touch>
-      <div class="things" v-if="isCag"><input type="text" v-model="item.todo" class="cag"></div>
+      <v-touch class="things" v-on:doubletap="dbcagList($event)" v-if="!isCag">{{item.todo}}</v-touch>
+      <div class="things" v-if="isCag"><input type="text" v-model="item.todo" class="cag" @keydown.enter="cagList(item)"></div>
       <span class="del_item" @click="delItem(item.id)">&times;</span>
     </div>
     <div class="hrdel" v-if="check"></div>
@@ -36,7 +36,7 @@ export default {
     delItem(id) {
       this.$emit('delList', id)
     },
-    cagList (e) {
+    dbcagList (e) {
       this.isCag = true
       const cage = e.target
       document.addEventListener('click',(e)=>{
@@ -45,6 +45,10 @@ export default {
           this.isCag = false
         }
       })
+    },
+    cagList (item) {
+      this.isCag = !this.isCag
+      this.$emit('cagList', item)
     }
   },
   // 监听器

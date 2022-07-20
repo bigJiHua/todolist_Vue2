@@ -2,9 +2,11 @@ const joi = require('joi')
 
 
 const todo = joi.string().max(50).required()
+const ctodo = joi.required()
 const username = joi.string().required()
 const id = joi.number().required()
-const upload = joi.string().required()
+const settings = joi.required()
+const met = joi.required()
 
 
 
@@ -19,13 +21,14 @@ exports.settodo = {
 exports.cagdeltodo = {
     body: {
         username,
-        id
+        ctodo
     }
 }
 
-exports.setUpload = {
+exports.setSetting = {
     body:{
-        username,
-        upload
+        username,// 用户
+        settings,// 设置值
+        met // 设置项
     }
 }

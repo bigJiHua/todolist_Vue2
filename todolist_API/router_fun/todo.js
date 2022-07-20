@@ -17,14 +17,20 @@ exports.gettodolist = (req,res) => {
     })
 }
 
-exports.setUpload = (req,res) => {
+exports.setSetting = (req,res) => {
     const user = req.body.username
+    const data = {}
+    if(req.body.met === 'upload') {
+        data.upload = req.body.settings
+    } else if(req.body.met === 'toChange') {
+        data.toChange = req.body.settings
+    }
     const sql = `select * from ev_users where username=?`
     db.query(sql,user,(err,results)=>{
         if(err) return res.cc(err,404)
         if(results.length === 0) return res.cc('用户不存在',404)
         const sql = `update ev_users set ? where username=?`
-        db.query(sql,[req.body,user],(err,results)=>{
+        db.query(sql,[data,user],(err,results)=>{
             if(err) return res.cc(err,404)
             if(results.affectedRows !== 1) return res.cc('设置失败',506)
             res.status(200).send({
@@ -66,16 +72,47 @@ exports.addtodolist = (req,res) => {
 }
 
 exports.cagtodolist = (req,res) => {
-    res.status(200).send({
-        status: 200,
-        message: 'Hello world'
+    const username = req.body.username
+    const todo = JSON.parse(req.body.ctodo)
+    const id = todo.id
+    const sql = `select * from ev_users where username=?`
+    db.query(sql,username,(err,results)=>{
+        if(err) return res.cc(err)
+        if(results.length === 0 ) return res.cc('非法用户', 406)
+        const sql = `update ev_todo set ? where username=? and id=?`
+        db.query(sql,[todo,username,id],(err,results)=>{
+            if(err) return res.cc(err)
+            if(results.affectedRows !== 1 ) return res.cc('修改失败', 406)
+            res.status(200).send({
+                status: 200,
+                message: '修改成功'
+            })
+        })
     })
 }
 
 
 exports.deltodolist = (req,res) => {
-    res.status(200).send({
-        status: 200,
-        message: 'Hello world'
+    const username = req.body.username
+    const todo = JSON.parse(req.body.ctodo)
+    const id = todo.id
+    const sql = `select * from ev_users where username=?`
+    db.query(sql,username,(err,results)=>{
+        if(err) return res.cc(err)
+        if(results.length === 0 ) return res.cc('非法用户', 406)
+        const sql = `select * from ev_todo where username=? and id=?`
+        db.query(sql,[username,id],(err,results)=> {
+            if (err) return res.cc(err)
+            if (results.length === 0) return res.cc('非法用户', 406)
+            const sql = `update ev_todo set ? where username=? and id=?`
+            db.query(sql, [todo, username, id], (err, results) => {
+                if (err) return res.cc(err)
+                if (results.affectedRows !== 1) return res.cc('修改失败', 406)
+                res.status(200).send({
+                    status: 200,
+                    message: '修改成功'
+                })
+            })
+        })
     })
 }
