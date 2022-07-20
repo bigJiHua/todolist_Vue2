@@ -149,6 +149,7 @@ export default {
           type: 'success',
           duration: 1000,
         })
+        location.reload()
       }
     },
     async uploadd(todo) {

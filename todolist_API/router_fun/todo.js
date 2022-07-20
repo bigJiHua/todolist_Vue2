@@ -43,6 +43,8 @@ exports.setSetting = (req,res) => {
 
 exports.addtodolist = (req,res) => {
     const user = req.body.username
+    const data = req.body
+    data.time = new Date().getTime()
     const sql = `select * from ev_users where username=?`
     db.query(sql,user,(err,results)=> {
         if (err) return res.cc(err, 404)
@@ -96,6 +98,12 @@ exports.deltodolist = (req,res) => {
     const username = req.body.username
     const todo = JSON.parse(req.body.ctodo)
     const id = todo.id
+    const data = {}
+    if(req.body.met === 'upload') {
+        data.upload = req.body.settings
+    } else if(req.body.met === 'toChange') {
+        data.toChange = req.body.settings
+    }
     const sql = `select * from ev_users where username=?`
     db.query(sql,username,(err,results)=>{
         if(err) return res.cc(err)
@@ -103,7 +111,7 @@ exports.deltodolist = (req,res) => {
         const sql = `select * from ev_todo where username=? and id=?`
         db.query(sql,[username,id],(err,results)=> {
             if (err) return res.cc(err)
-            if (results.length === 0) return res.cc('非法用户', 406)
+            if (results.length === 0) return res.cc('非法操作', 406)
             const sql = `update ev_todo set ? where username=? and id=?`
             db.query(sql, [todo, username, id], (err, results) => {
                 if (err) return res.cc(err)

@@ -3,10 +3,11 @@
     <div class="content_body" id="content_body">
       <h1>I Want todo</h1>
       <div class="inputArea">
+      <van-icon name="arrow-down" class="Chekbox" @click="checkAll()"/>
         <input
           type="text"
           class="inputBox"
-          placeholder="输入要做的事"
+          placeholder="输入要做的事 (Limit 25)"
           v-model="newTodo"
           @keydown.enter="addTodo"
         />
@@ -28,6 +29,16 @@
           ></todolist>
         </van-pull-refresh>
       </div>
+      <div class="bottom_Count">
+        <div class="Center_Count">
+          <p><span>代办&nbsp;</span>{{Count.todoCount}}</p>
+          <p><span>&nbsp;完成&nbsp;</span>{{Count.todoFinish}}</p>
+          <p><span>&nbsp;删除&nbsp;</span>{{Count.todoDelete}}</p>
+        </div>
+        <div class="checkBox">
+          <van-button>&nbsp;清除已完成</van-button>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -39,12 +50,17 @@ export default {
   props: [],
   data() {
     return {
-      isall: true,
+      isall: false,
       TodoList: [],
       newTodo: '',
       checkupl: false,
       loading: false,
       count: 0,
+      Count:{
+        todoCount: 0,
+        todoFinish: 0,
+        todoDelete:0
+      }
     }
   },
   created() {
@@ -75,7 +91,7 @@ export default {
     addTodo() {
       if (this.newTodo !== '' && this.newTodo.length !== 0) {
         const todo = {
-          todo: this.newTodo,
+          todo: this.newTodo.substring(0, 25),
           upcoming: 0,
         }
         setTimeout(async () => {
@@ -155,6 +171,9 @@ export default {
         this.checkupl = false
       }
     },
+    checkAll() {
+      this.isall = !this.isall
+    },
   },
   name: 'Home',
   components: {
@@ -206,5 +225,24 @@ export default {
     height: 50vh;
     overflow: scroll;
   }
+}
+.bottom_Count {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 15px;
+}
+.checkBox {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  .Chekbox {
+    height: 21px;
+    width: 21px;
+  }
+}
+.Center_Count{
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 </style>
