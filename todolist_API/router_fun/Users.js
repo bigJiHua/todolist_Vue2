@@ -7,7 +7,7 @@ const config = require('../config')
 exports.user_login_API = (req, res) => {
     const userinfo = req.body
     const sql = `select * from ev_users where username=? and state=0`
-    // s执行sql语句
+    // 查询 用户表是否有这个用户
     db.query(sql, userinfo.username, (err, results) => {
         if(err) return res.cc(err)
         if (results.length !== 1) return res.cc('登录失败 账号不存在或已经被注销！',404)
@@ -16,6 +16,7 @@ exports.user_login_API = (req, res) => {
         const user = { ...results[0], password: ''}
         const tokenStr = jwt.sign(user, config.jwtSecretKey, { expiresIn: config.expiresIn })
         const sql = `select * from ev_todo where username=?`
+        // 查询 代办数据库是否有值
         db.query(sql,userinfo.username, (err,results) => {
             if(err) return res.send({
                 status: 200,
@@ -25,9 +26,10 @@ exports.user_login_API = (req, res) => {
             })
             if(results.length === 0) return  res.send({
                 status: 200,
-                message:'登录成功，查询出现错误',
+                message:'登录成功',
                 token: 'Bearer ' + tokenStr,
-                data: user
+                data: user,
+                count: 0
             })
             res.send({
                 status: 200,

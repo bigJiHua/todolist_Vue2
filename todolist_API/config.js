@@ -2,6 +2,6 @@
 module.exports={
     // 配置一个token加密密钥
     jwtSecretKey : 'todolistVue',
-    // token的有效期 1年
-    expiresIn : '8760h'
+    // token的有效期 3h
+    expiresIn : '3h'
 }

@@ -9,14 +9,10 @@ export default new Vuex.Store({
     token: localStorage.getItem('token'),
     Upload: parseInt(localStorage.getItem('Upload')) === 0 ? false : true,
     toChange: parseInt(localStorage.getItem('toChange')) === 0 ? false : true,
-    todo: [],
     todoCount: JSON.parse(localStorage.getItem('Count'))
   },
   getters: {},
   mutations: {
-    todo(state, todo) {
-      state.todo = todo
-    },
     Upload(state, Up) {
       state.Upload = Up
     }

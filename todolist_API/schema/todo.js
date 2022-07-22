@@ -1,7 +1,7 @@
 const joi = require('joi')
 
 
-const todo = joi.string().max(50).required()
+const todo = joi.string().required()
 const ctodo = joi.required()
 const username = joi.string().required()
 const id = joi.number().required()

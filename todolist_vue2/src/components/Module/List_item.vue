@@ -8,7 +8,7 @@
         @click="checkOk(item.id)"
       />
       <v-touch
-        class="things"
+        :class="{ things: !checks, thingOk: checks }"
         v-on:doubletap="dbcagList($event)"
         v-if="!isCag"
         >{{ item.todo }}</v-touch
@@ -42,32 +42,40 @@ export default {
   },
   data() {
     return {
-      check: parseInt(this.item.upcoming) === 1,
+      check: false,
       checks: false,
       isCag: false,
-      cagVal: this.item.todo
+      cagVal: this.item.todo,
     }
   },
   methods: {
     checkOk(id) {
-      console.log('Check' + id)
       this.isCag = false
       this.checks = !this.checks
+      this.$emit('CheckOk', id)
     },
     delItem(id) {
       this.$emit('delList', id)
     },
     dbcagList(e) {
       if (this.$store.state.toChange) {
-        this.isCag = true
-        const cage = e.target
-        document.addEventListener('click', (e) => {
-          const ele = e.target
-          if (ele !== cage && ele.className !== 'cag') {
-            this.cagList(this.item)
-            this.isCag = false
-          }
-        })
+        if (this.isCag) {
+          this.isCag = true
+          const cage = e.target
+          document.addEventListener('click', (e) => {
+            const ele = e.target
+            if (ele !== cage && ele.className !== 'cag') {
+              this.cagList(this.item)
+              this.isCag = false
+            }
+          })
+        } else {
+          this.$notify({
+            message: '不可编辑',
+            type: 'danger',
+            duration: 1300,
+          })
+        }
       } else {
         this.$notify({
           message: '双击快速编辑功能未开启，请到我的页面点击开启此功能吧!',
@@ -78,8 +86,10 @@ export default {
     },
     cagList(item) {
       this.isCag = !this.isCag
-      item.todo = item.todo.substring(0,25)
-      this.$emit('cagList', item)
+      if (item.todo !== this.cagVal) {
+        item.todo = this.cagVal.substring(0, 25)
+        this.$emit('cagList', item)
+      }
     },
   },
   computed: {
@@ -87,10 +97,10 @@ export default {
       const time = new Date().getTime() - this.item.time
       if (Math.floor(time / (60 * 1000)) === 0) {
         return '刚刚'
-      } else if (Math.floor(time / (60 * 1000)) > 60){
-        return (time / (60 * 1000 ) / 60).toPrecision(2)+ ' 小时前'
+      } else if (Math.floor(time / (60 * 1000)) > 60) {
+        return (time / (60 * 1000) / 60).toPrecision(2) + ' 小时前'
       } else {
-        return Math.floor(time / (60 * 1000 )) + ' 分钟前'
+        return Math.floor(time / (60 * 1000)) + ' 分钟前'
       }
     },
   },
@@ -99,9 +109,17 @@ export default {
     isall: function () {
       this.check = this.isall
     },
-    item: function () {
-      this.cagVal = this.item.todo
-    }
+    item: {
+      handler(newVal) {
+        this.cagVal = newVal.todo
+        if (newVal.finishi === 1) {
+          this.check = true
+          this.checks = true
+        }
+      },
+      immediate: true,
+      deep: true,
+    },
   },
   name: 'ListItem',
 }
@@ -127,6 +145,7 @@ export default {
 .Chekbox {
   height: 25px;
   width: 25px;
+  margin-right: 15px;
 }
 .things {
   width: 100%;
@@ -135,12 +154,21 @@ export default {
   overflow: overlay;
   padding: 0 5px;
 }
+.thingOk {
+  width: 100%;
+  font-weight: 500;
+  font-size: 1.2rem;
+  overflow: overlay;
+  padding: 0 5px;
+  color: grey;
+}
 .cag {
   padding: 10px;
   border: 0;
   border-radius: 5px;
 }
 .del_item {
+  margin-left: 15px;
   font-size: 2rem;
   color: rgba(247, 51, 64, 0.9);
   font-weight: 500;
@@ -151,6 +179,9 @@ export default {
   top: 50%;
   left: 62px;
   height: 2px;
-  background-color: rgba(247, 51, 64, 0.9);
+  background-color: rgba(247, 51, 64, 0.6);
+}
+.things::-webkit-scrollbar {
+  display: none;
 }
 </style>

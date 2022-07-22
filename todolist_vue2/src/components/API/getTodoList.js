@@ -5,9 +5,10 @@ const getTodolist = function () {
 }
 // 新增代办列表
 const addTodolist = function (data) {
+  delete data.id
   const Params = new URLSearchParams()
   Params.append('username', localStorage.getItem('Username'))
-  Params.append('todo', data.todo)
+  Params.append('todo', JSON.stringify(data))
   return request.post('/api/addtodo', Params)
 }
 // 删除代办列表

@@ -30,8 +30,8 @@
       </div>
     </div>
     <!-- 操作面板 -->
-    <van-cell-group class="action-card" v-if="isLogin">
-      <van-cell icon="upgrade" center title="是否上传到云端">
+    <van-cell-group class="action-card">
+      <van-cell icon="upgrade" center title="是否上传到云端" v-if="isLogin">
         <template #right-icon>
           <van-switch :value="checked" size="24" @click="toUpload" />
         </template>
@@ -41,7 +41,12 @@
           <van-switch :value="change" size="24" @click="toChange" />
         </template>
       </van-cell>
-      <van-cell icon="warning-o" title="退出登录" @click="logout" />
+      <van-cell
+        icon="warning-o"
+        title="退出登录"
+        @click="logout"
+        v-if="isLogin"
+      />
     </van-cell-group>
   </div>
 </template>
@@ -54,8 +59,9 @@ export default {
     return {
       isLogin: localStorage.getItem('Username') ? true : false,
       User: localStorage.getItem('Username'),
-      checked: this.$store.state.Upload,
+      checked: localStorage.getItem('Upload') === '0' ? false : true,
       change: this.$store.state.toChange,
+      length: 0,
     }
   },
   created() {
@@ -81,43 +87,48 @@ export default {
             message: '确定退出登录吗？',
           })
           .then(() => {
-            localStorage.clear()
+            localStorage.removeItem('Login')
+            localStorage.removeItem('Upload')
+            localStorage.removeItem('toChange')
+            localStorage.removeItem('Count')
+            localStorage.removeItem('token')
+            localStorage.removeItem('Username')
             this.$router.push('/')
             location.reload()
           })
       }
     },
     async toUpload() {
-      if (!this.checked) {
+      this.checked = !this.checked
+      if (this.checked) {
+        console.log(this.checked)
         this.$dialog
           .confirm({
             message: '开启上传云端后最多只能存放10条数据哦',
           })
           .then(() => {
-            this.checked = true
-            this.$store.commit('Upload', this.checked)
             localStorage.setItem('Upload', 1)
             this.Upload()
-            if (this.$store.state.todo.length !== 0) {
-              const newList = []
-              const data = this.$store.state.todo
-              data.forEach((item, index) => {
-                if (index < 10) {
-                  newList.push(item)
-                }
-              })
+            if (localStorage.getItem('todoList')) {
               this.$dialog
                 .confirm({
                   message: '当前检测到代办列表有值，是否立即上传?',
                 })
                 .then(() => {
-                  this.uploadd(newList)
+                  JSON.parse(localStorage.getItem('todoList')).forEach(
+                    (item, index) => {
+                      if (length <= 10) {
+                        delete item.id
+                        this.uploadd(item)
+                      }
+                    }
+                  )
                 })
                 .catch(() => {})
             }
           })
           .catch(() => {
-            this.checked = false
+            localStorage.setItem('Upload', 0)
           })
       } else {
         this.$dialog
@@ -125,13 +136,11 @@ export default {
             message: '确定取消上传云端吗？',
           })
           .then(() => {
-            this.checked = false
-            this.$store.commit('Upload', this.checked)
             localStorage.setItem('Upload', 0)
             this.Upload()
           })
           .catch(() => {
-            this.checked = true
+            localStorage.setItem('Upload', 1)
           })
       }
     },
@@ -142,19 +151,27 @@ export default {
       } else {
         localStorage.setItem('toChange', 0)
       }
-      const { data: res } = await Setting.setSetting('toChange',localStorage.getItem('toChange'))
-      if (res.status === 200) {
-        this.$notify({
-          message: res.message,
-          type: 'success',
-          duration: 1000,
-        })
-        location.reload()
+      if (
+        localStorage.getItem('Login') === 1 &&
+        localStorage.getItem('token')
+      ) {
+        const { data: res } = await Setting.setSetting(
+          'toChange',
+          localStorage.getItem('toChange')
+        )
+        if (res.status === 200) {
+          this.$notify({
+            message: res.message,
+            type: 'success',
+            duration: 1000,
+          })
+          location.reload()
+        }
       }
     },
     async uploadd(todo) {
       if (todo !== undefined) {
-        const { data: res } = await Upload.addTodolist(todo)
+        const { data: res } = await Setting.addTodolist(todo)
         if (res.status === 200) {
           this.$notify({
             message: res.message,
@@ -177,18 +194,29 @@ export default {
       }
     },
     async Upload() {
-      const { data: res } = await Setting.setSetting('upload',localStorage.getItem('Upload'))
+      const { data: res } = await Setting.setSetting(
+        'upload',
+        localStorage.getItem('Upload')
+      )
       if (res.status === 200) {
         this.$notify({
           message: res.message,
           type: 'success',
           duration: 1000,
         })
+        this.length = res.length
+        // location.reload()
       }
     },
     overLogin() {
-      localStorage.clear()
+      localStorage.removeItem('Login')
+      localStorage.removeItem('Upload')
+      localStorage.removeItem('toChange')
+      localStorage.removeItem('Count')
+      localStorage.removeItem('token')
+      localStorage.removeItem('Username')
       this.$router.push('/Login')
+      location.reload()
     },
   },
   watch: {},

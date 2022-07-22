@@ -33,9 +33,22 @@ exports.setSetting = (req,res) => {
         db.query(sql,[data,user],(err,results)=>{
             if(err) return res.cc(err,404)
             if(results.affectedRows !== 1) return res.cc('设置失败',506)
-            res.status(200).send({
-                status: 200,
-                message: '设置成功'
+            const sql = `select * from ev_todo where username=?`
+            db.query(sql,user,(err,results)=>{
+                if(err) return res.status(200).send({
+                    status: 200,
+                    message: '设置成功'
+                })
+                if(results.length === 0) return res.status(200).send({
+                    status: 200,
+                    message: '设置成功',
+                    length: 0
+                })
+                res.status(200).send({
+                    status: 200,
+                    message: '设置成功',
+                    length: results.length
+                })
             })
         })
     })
@@ -43,8 +56,7 @@ exports.setSetting = (req,res) => {
 
 exports.addtodolist = (req,res) => {
     const user = req.body.username
-    const data = req.body
-    data.time = new Date().getTime()
+    const data = JSON.parse(req.body.todo)
     const sql = `select * from ev_users where username=?`
     db.query(sql,user,(err,results)=> {
         if (err) return res.cc(err, 404)
@@ -55,7 +67,7 @@ exports.addtodolist = (req,res) => {
                 if (err) return res.cc(err)
                 if (results.length <= 10) {
                     const sql = `insert into ev_todo set ?`
-                    db.query(sql,req.body,(err,results)=>{
+                    db.query(sql,data,(err,results)=>{
                         if (err) return res.cc(err)
                         if (results.affectedRows !== 1) return res.cc('添加失败')
                         res.status(200).send({
@@ -84,7 +96,7 @@ exports.cagtodolist = (req,res) => {
         const sql = `update ev_todo set ? where username=? and id=?`
         db.query(sql,[todo,username,id],(err,results)=>{
             if(err) return res.cc(err)
-            if(results.affectedRows !== 1 ) return res.cc('修改失败', 406)
+            if(results.affectedRows !== 1 ) return res.cc('修改失败,请同步至数据库再进行修改', 406)
             res.status(200).send({
                 status: 200,
                 message: '修改成功'
@@ -93,7 +105,7 @@ exports.cagtodolist = (req,res) => {
     })
 }
 
-
+// TODO 删除功能
 exports.deltodolist = (req,res) => {
     const username = req.body.username
     const todo = JSON.parse(req.body.ctodo)

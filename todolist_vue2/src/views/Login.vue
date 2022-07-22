@@ -93,15 +93,21 @@ export default {
                 is_delete: 0,
               }
               const num = res.count
-              num.forEach((item) => {
-                if (item.finishi === 0) {
-                  todoCount.finishi += 1
-                } else if (item.upcoming != 0) {
-                  todoCount.finishi += 1
-                } else if (item.is_delete != 0) {
-                  todoCount.is_delete += 1
-                }
-              })
+              if (num !== 0) {
+                num.forEach((item) => {
+                  if (item.finishi === 0) {
+                    todoCount.finishi += 1
+                  } else if (item.upcoming != 0) {
+                    todoCount.upcoming += 1
+                  } else if (item.is_delete != 0) {
+                    todoCount.is_delete += 1
+                  }
+                })
+              } else {
+                todoCount.finishi = 0
+                todoCount.upcoming = 0
+                todoCount.is_delete = 0
+              }
               localStorage.setItem('Count', JSON.stringify(todoCount))
               localStorage.setItem('Login', 1)
               localStorage.setItem('token', res.token)

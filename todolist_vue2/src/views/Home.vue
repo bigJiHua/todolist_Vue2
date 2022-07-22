@@ -3,7 +3,7 @@
     <div class="content_body" id="content_body">
       <h1>I Want todo</h1>
       <div class="inputArea">
-      <van-icon name="arrow-down" class="Chekbox" @click="checkAll()"/>
+        <van-icon name="arrow-down" class="Chekbox" @click="checkAll()" />
         <input
           type="text"
           class="inputBox"
@@ -26,14 +26,15 @@
             :item="item"
             @delList="delList"
             @cagList="patchList"
+            @CheckOk="CheckOk"
           ></todolist>
         </van-pull-refresh>
       </div>
       <div class="bottom_Count">
         <div class="Center_Count">
-          <p><span>代办&nbsp;</span>{{Count.todoCount}}</p>
-          <p><span>&nbsp;完成&nbsp;</span>{{Count.todoFinish}}</p>
-          <p><span>&nbsp;删除&nbsp;</span>{{Count.todoDelete}}</p>
+          <p><span>代办&nbsp;</span>{{ Count.todoCount }}</p>
+          <p><span>&nbsp;完成&nbsp;</span>{{ Count.todoFinish }}</p>
+          <p><span>&nbsp;删除&nbsp;</span>{{ Count.todoDelete }}</p>
         </div>
         <div class="checkBox">
           <van-button>&nbsp;清除已完成</van-button>
@@ -56,44 +57,58 @@ export default {
       checkupl: false,
       loading: false,
       count: 0,
-      Count:{
+      Count: {
         todoCount: 0,
         todoFinish: 0,
-        todoDelete:0
-      }
+        todoDelete: 0,
+      },
     }
   },
   created() {
     this.getlist()
     // 检查是否符合上传资格
     this.checkuplsc()
+    if (localStorage.getItem('toChange') === null) {
+      localStorage.setItem('toChange', 0)
+    }
   },
   methods: {
     async getlist() {
       const { data: res } = await getTodolist.getTodolist()
+      // 不等于空空如也时
       if (res.status !== 406) {
         this.$notify({
           message: res.message,
           type: 'success',
           duration: 1000,
         })
-        const dataArry = res.data
-        this.TodoList = dataArry.reverse()
-        this.$store.commit('todo', res.data)
+        localStorage.setItem('todoList', JSON.stringify(res.data.reverse()))
+        this.TodoList = JSON.parse(localStorage.getItem('todoList'))
       } else {
-        this.$notify({
-          message: res.message,
-          type: 'primary',
-          duration: 1000,
-        })
+        // 空空如也时
+        if (localStorage.getItem('todoList')) {
+          this.TodoList = JSON.parse(localStorage.getItem('todoList'))
+        } else {
+          this.$notify({
+            message: res.message,
+            type: 'primary',
+            duration: 1000,
+          })
+        }
       }
     },
     addTodo() {
       if (this.newTodo !== '' && this.newTodo.length !== 0) {
         const todo = {
+          id: this.TodoList.length,
+          username: localStorage.getItem('Username'),
           todo: this.newTodo.substring(0, 25),
+          finishi: 0,
           upcoming: 0,
+          is_delete: 0,
+          time: new Date().getTime(),
         }
+        // 如果开启的上传云端
         setTimeout(async () => {
           if (this.checkupl) {
             const { data: res } = await getTodolist.addTodolist(todo)
@@ -113,7 +128,7 @@ export default {
             }
           }
           this.TodoList.push(todo)
-          this.$store.commit('todo', this.TodoList)
+          localStorage.setItem('todoList', JSON.stringify(this.TodoList))
           this.newTodo = ''
         }, 800)
       } else {
@@ -153,6 +168,25 @@ export default {
         this.TodoList = newArry
       }
     },
+    CheckOk(id) {
+      const newDataArry = []
+      this.TodoList.forEach((item) => {
+        if (item.id === id && item.finishi === 0) {
+          item.finishi = 1
+          if (localStorage.getItem('Login')) {
+            this.patchList(item)
+          }
+        } else {
+          item.finishi = 0
+          if (localStorage.getItem('Login')) {
+            this.patchList(item)
+          }
+        }
+        newDataArry.push(item)
+      })
+      this.TodoList = newDataArry
+      localStorage.setItem('todoList', JSON.stringify(newDataArry))
+    },
     onRefresh() {
       this.getlist()
       this.loading = false
@@ -174,6 +208,23 @@ export default {
     checkAll() {
       this.isall = !this.isall
     },
+  },
+  watch: {
+    // TodoList: {
+    //   handler(newVal) {
+    //     this.Count.todoCount = 0
+    //     newVal.forEach((item) => {
+    //       if (item.finishi === 0) {
+    //         console.log(item)
+    //         this.Count.todoCount += 1
+    //       } else {
+    //         this.Count.todoCount -= 1
+    //       }
+    //     })
+    //   },
+    //   immediate: true,
+    //   deep: true,
+    // },
   },
   name: 'Home',
   components: {
@@ -240,7 +291,7 @@ export default {
     width: 21px;
   }
 }
-.Center_Count{
+.Center_Count {
   display: flex;
   justify-content: center;
   align-items: center;
