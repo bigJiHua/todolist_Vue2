@@ -97,8 +97,10 @@ export default {
       const time = new Date().getTime() - this.item.time
       if (Math.floor(time / (60 * 1000)) === 0) {
         return '刚刚'
-      } else if (Math.floor(time / (60 * 1000)) > 60) {
-        return (time / (60 * 1000) / 60).toPrecision(2) + ' 小时前'
+      } else if (Math.floor(time / (60 * 1000) / 60 / 24) >= 1) {
+        return Math.floor(time / (60 * 1000) / 60 / 24).toPrecision(1) + '天前'
+      } else if (Math.floor(time / (60 * 1000)) >= 60) {
+        return (time / (60 * 1000) / 60).toPrecision(1) + ' 小时前'
       } else {
         return Math.floor(time / (60 * 1000)) + ' 分钟前'
       }

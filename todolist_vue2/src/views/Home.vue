@@ -48,7 +48,6 @@
 import todolist from '@/components/Module/List_item.vue'
 import getTodolist from '@/components/API/getTodoList'
 export default {
-  props: [],
   data() {
     return {
       isall: false,
@@ -87,6 +86,11 @@ export default {
       } else {
         // 空空如也时
         if (localStorage.getItem('todoList')) {
+          this.$notify({
+            message: '当前获取的是本地数据，无法进行云端操作',
+            type: 'primary',
+            duration: 1000,
+          })
           this.TodoList = JSON.parse(localStorage.getItem('todoList'))
         } else {
           this.$notify({
@@ -107,10 +111,12 @@ export default {
           upcoming: 0,
           is_delete: 0,
           time: new Date().getTime(),
+          new: true
         }
         // 如果开启的上传云端
         setTimeout(async () => {
           if (this.checkupl) {
+            delete todo.new
             const { data: res } = await getTodolist.addTodolist(todo)
             if (res.status === 200) {
               this.$notify({
@@ -128,7 +134,12 @@ export default {
             }
           }
           this.TodoList.push(todo)
-          localStorage.setItem('todoList', JSON.stringify(this.TodoList))
+          localStorage.setItem('todoList', JSON.stringify(this.TodoList.reverse()))
+          this.$notify({
+            message: '添加成功',
+            type: 'success',
+            duration: 1000,
+          })
           this.newTodo = ''
         }, 800)
       } else {

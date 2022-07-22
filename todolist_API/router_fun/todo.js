@@ -37,23 +37,26 @@ exports.setSetting = (req,res) => {
             db.query(sql,user,(err,results)=>{
                 if(err) return res.status(200).send({
                     status: 200,
-                    message: '设置成功'
+                    message: '设置成功,查条错误',
+                    length: 0,
+                    data: []
                 })
                 if(results.length === 0) return res.status(200).send({
                     status: 200,
                     message: '设置成功',
-                    length: 0
+                    length: 10,
+                    data: []
                 })
                 res.status(200).send({
                     status: 200,
                     message: '设置成功',
-                    length: results.length
+                    data: results
                 })
             })
         })
     })
 }
-
+// 添加数据
 exports.addtodolist = (req,res) => {
     const user = req.body.username
     const data = JSON.parse(req.body.todo)
@@ -65,7 +68,7 @@ exports.addtodolist = (req,res) => {
             const sql = `select * from ev_todo where username=?`
             db.query(sql,user,(err,results)=>{
                 if (err) return res.cc(err)
-                if (results.length <= 10) {
+                if (results.length < 10) {
                     const sql = `insert into ev_todo set ?`
                     db.query(sql,data,(err,results)=>{
                         if (err) return res.cc(err)
@@ -84,7 +87,7 @@ exports.addtodolist = (req,res) => {
         }
     })
 }
-
+// 更改所作
 exports.cagtodolist = (req,res) => {
     const username = req.body.username
     const todo = JSON.parse(req.body.ctodo)
@@ -104,7 +107,6 @@ exports.cagtodolist = (req,res) => {
         })
     })
 }
-
 // TODO 删除功能
 exports.deltodolist = (req,res) => {
     const username = req.body.username

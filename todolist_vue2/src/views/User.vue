@@ -62,6 +62,7 @@ export default {
       checked: localStorage.getItem('Upload') === '0' ? false : true,
       change: this.$store.state.toChange,
       length: 0,
+      TodosData: [],
     }
   },
   created() {
@@ -101,7 +102,6 @@ export default {
     async toUpload() {
       this.checked = !this.checked
       if (this.checked) {
-        console.log(this.checked)
         this.$dialog
           .confirm({
             message: '开启上传云端后最多只能存放10条数据哦',
@@ -112,17 +112,26 @@ export default {
             if (localStorage.getItem('todoList')) {
               this.$dialog
                 .confirm({
-                  message: '当前检测到代办列表有值，是否立即上传?',
+                  message: '当前检测到本地代办列表有值，是否立即上传?',
                 })
                 .then(() => {
-                  JSON.parse(localStorage.getItem('todoList')).forEach(
-                    (item, index) => {
-                      if (length <= 10) {
+                  // 本地数据倒转
+                  const localData = JSON.parse(localStorage.getItem('todoList'))
+                  // 本地数据遍历
+                  // 如果当前用户在云端数据为0 则新插入数据
+                  if (this.length === 0) {
+                    delete e.id
+                    this.uploadd(e)
+                  } else {
+                    // 找出重复项
+                    localData.forEach((item, i) => {
+                      if (item.new && item.new === true) {
                         delete item.id
+                        delete item.new
                         this.uploadd(item)
                       }
-                    }
-                  )
+                    })
+                  }
                 })
                 .catch(() => {})
             }
@@ -204,8 +213,8 @@ export default {
           type: 'success',
           duration: 1000,
         })
-        this.length = res.length
-        // location.reload()
+        this.TodosData = res.data
+        this.length = this.TodosData.length
       }
     },
     overLogin() {
