@@ -87,28 +87,6 @@ export default {
             this.loading = true
             // 判断返回状态码是否成功
             if (res.status === 200) {
-              const todoCount = {
-                finishi: 0,
-                upcoming: 0,
-                is_delete: 0,
-              }
-              const num = res.count
-              if (num !== 0) {
-                num.forEach((item) => {
-                  if (item.finishi === 0) {
-                    todoCount.finishi += 1
-                  } else if (item.upcoming != 0) {
-                    todoCount.upcoming += 1
-                  } else if (item.is_delete != 0) {
-                    todoCount.is_delete += 1
-                  }
-                })
-              } else {
-                todoCount.finishi = 0
-                todoCount.upcoming = 0
-                todoCount.is_delete = 0
-              }
-              localStorage.setItem('Count', JSON.stringify(todoCount))
               localStorage.setItem('Login', 1)
               localStorage.setItem('token', res.token)
               localStorage.setItem('Username', res.data.username)
@@ -123,7 +101,7 @@ export default {
                 this.show = false
                 this.loading = false
                 this.$router.push('/User')
-                location.reload()
+                // location.reload()
               }, this.setTime)
             } else {
               this.showPopup(res.message)

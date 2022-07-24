@@ -11,14 +11,7 @@ const addTodolist = function (data) {
   Params.append('todo', JSON.stringify(data))
   return request.post('/api/addtodo', Params)
 }
-// 删除代办列表
-const delTodolist = function (id) {
-  const Params = new URLSearchParams()
-  Params.append('username', localStorage.getItem('Username'))
-  Params.append('id', id)
-  return request.delete('/api/deltodo', Params)
-}
-// 修改代办列表
+// 修改、完成、删除代办列表
 const putTodolist = function (data) {
   const Params = new URLSearchParams()
   Params.append('username', localStorage.getItem('Username'))
@@ -37,6 +30,5 @@ export default {
   getTodolist,
   addTodolist,
   putTodolist,
-  delTodolist,
   setSetting,
 }

@@ -21,7 +21,7 @@
           @keydown.enter="cagList(item)"
         />
       </div>
-      <span class="del_item" @click="delItem(item.id)">&times;</span>
+      <span class="del_item" @click="delItem(item)">&times;</span>
     </div>
     <p class="time">{{ time }}</p>
     <div class="hrdel" v-if="checks"></div>
@@ -29,6 +29,7 @@
 </template>
 
 <script>
+import TodosApi from '@/components/API/getTodoList'
 export default {
   props: {
     isall: {
@@ -54,8 +55,32 @@ export default {
       this.checks = !this.checks
       this.$emit('CheckOk', id)
     },
-    delItem(id) {
-      this.$emit('delList', id)
+    async delItem(item) {
+      item.is_delete = 1
+      if (this.$store.state.Login === 1 && localStorage.getItem('token')) {
+        const { data: res } = await TodosApi.putTodolist(item)
+        if (res.status === 200) {
+          this.$notify({
+            message: res.message,
+            type: 'success',
+            duration: 1000,
+          })
+          this.$emit('toget')
+        } else if (res.status === 406) {
+          this.$notify({
+            message: res.message,
+            type: 'danger',
+            duration: 1000,
+          })
+          this.$emit('toget')
+        }
+      } else {
+        this.$notify({
+          message: '未登录，无法操作云端数据',
+          type: 'danger',
+          duration: 1000,
+        })
+      }
     },
     dbcagList(e) {
       if (this.$store.state.toChange) {
@@ -100,7 +125,7 @@ export default {
       } else if (Math.floor(time / (60 * 1000) / 60 / 24) >= 1) {
         return Math.floor(time / (60 * 1000) / 60 / 24).toPrecision(1) + '天前'
       } else if (Math.floor(time / (60 * 1000)) >= 60) {
-        return (time / (60 * 1000) / 60).toPrecision(1) + ' 小时前'
+        return (time / (60 * 1000) / 60).toPrecision(3) + ' 小时前'
       } else {
         return Math.floor(time / (60 * 1000)) + ' 分钟前'
       }
@@ -137,6 +162,13 @@ export default {
   position: relative;
   background-color: rgba(243, 203, 203, 0.457);
 }
+.list_item:hover .del_item{
+  display: block;
+  margin-left: 15px;
+  font-size: 2rem;
+  color: rgba(247, 51, 64, 0.9);
+  font-weight: 500;
+}
 .showArea {
   width: 100%;
   height: 100%;
@@ -170,10 +202,7 @@ export default {
   border-radius: 5px;
 }
 .del_item {
-  margin-left: 15px;
-  font-size: 2rem;
-  color: rgba(247, 51, 64, 0.9);
-  font-weight: 500;
+  display: none;
 }
 .hrdel {
   width: 65%;

@@ -1,5 +1,5 @@
 const db = require('../database/db')
-
+// 获取用户代办
 exports.gettodolist = (req,res) => {
     const user = req.query.user
     const sql = `select * from ev_todo where username= ?`
@@ -16,7 +16,7 @@ exports.gettodolist = (req,res) => {
         })
     })
 }
-
+// 设置上传 修改
 exports.setSetting = (req,res) => {
     const user = req.body.username
     const data = {}
@@ -103,37 +103,6 @@ exports.cagtodolist = (req,res) => {
             res.status(200).send({
                 status: 200,
                 message: '修改成功'
-            })
-        })
-    })
-}
-// TODO 删除功能
-exports.deltodolist = (req,res) => {
-    const username = req.body.username
-    const todo = JSON.parse(req.body.ctodo)
-    const id = todo.id
-    const data = {}
-    if(req.body.met === 'upload') {
-        data.upload = req.body.settings
-    } else if(req.body.met === 'toChange') {
-        data.toChange = req.body.settings
-    }
-    const sql = `select * from ev_users where username=?`
-    db.query(sql,username,(err,results)=>{
-        if(err) return res.cc(err)
-        if(results.length === 0 ) return res.cc('非法用户', 406)
-        const sql = `select * from ev_todo where username=? and id=?`
-        db.query(sql,[username,id],(err,results)=> {
-            if (err) return res.cc(err)
-            if (results.length === 0) return res.cc('非法操作', 406)
-            const sql = `update ev_todo set ? where username=? and id=?`
-            db.query(sql, [todo, username, id], (err, results) => {
-                if (err) return res.cc(err)
-                if (results.affectedRows !== 1) return res.cc('修改失败', 406)
-                res.status(200).send({
-                    status: 200,
-                    message: '修改成功'
-                })
             })
         })
     })

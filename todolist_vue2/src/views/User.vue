@@ -16,15 +16,15 @@
       <!-- 动态、关注、粉丝 -->
       <div class="user-data">
         <div class="user-data-item">
-          <span>{{ this.$store.state.todoCount | finishi }}</span>
+          <span>{{ Count.finishi }}</span>
           <span>代办</span>
         </div>
         <div class="user-data-item">
-          <span>{{ this.$store.state.todoCount | upcoming }}</span>
+          <span>{{ Count.upcoming }}</span>
           <span>已完成</span>
         </div>
         <div class="user-data-item">
-          <span>{{ this.$store.state.todoCount | is_delete }}</span>
+          <span>{{ Count.is_delete }}</span>
           <span>删除</span>
         </div>
       </div>
@@ -63,6 +63,11 @@ export default {
       change: this.$store.state.toChange,
       length: 0,
       TodosData: [],
+      Count: {
+        finishi: this.$store.state.Count.finishi,
+        upcoming: this.$store.state.Count.upcoming,
+        is_delete: this.$store.state.Count.is_delete,
+      },
     }
   },
   created() {
@@ -115,15 +120,12 @@ export default {
                   message: '当前检测到本地代办列表有值，是否立即上传?',
                 })
                 .then(() => {
-                  // 本地数据倒转
                   const localData = JSON.parse(localStorage.getItem('todoList'))
-                  // 本地数据遍历
                   // 如果当前用户在云端数据为0 则新插入数据
                   if (this.length === 0) {
                     delete e.id
                     this.uploadd(e)
                   } else {
-                    // 找出重复项
                     localData.forEach((item, i) => {
                       if (item.new && item.new === true) {
                         delete item.id
@@ -230,29 +232,6 @@ export default {
   },
   watch: {},
   computed: {},
-  filters: {
-    finishi(val) {
-      if (localStorage.getItem('Count')) {
-        return val.finishi
-      } else {
-        return 0
-      }
-    },
-    upcoming(val) {
-      if (localStorage.getItem('Count')) {
-        return val.upcoming
-      } else {
-        return 0
-      }
-    },
-    is_delete(val) {
-      if (localStorage.getItem('Count')) {
-        return val.is_delete
-      } else {
-        return 0
-      }
-    },
-  },
   name: 'User',
   components: {},
 }
