@@ -5,6 +5,7 @@
         type="checkbox"
         class="Chekbox"
         v-model="check"
+        v-if="is_delete"
         @click="checkOk(item.id)"
       />
       <v-touch
@@ -21,7 +22,9 @@
           @keydown.enter="cagList(item)"
         />
       </div>
-      <span class="del_item" @click="delItem(item)">&times;</span>
+      <span class="del_item" @click="delItem(item)" v-if="is_delete"
+        >&times;</span
+      >
     </div>
     <p class="time">{{ time }}</p>
     <div class="hrdel" v-if="checks"></div>
@@ -46,12 +49,13 @@ export default {
       check: false,
       checks: false,
       isCag: false,
+      Cagtodo: false,
       cagVal: this.item.todo,
+      is_delete: true,
     }
   },
   methods: {
     checkOk(id) {
-      this.isCag = false
       this.checks = !this.checks
       this.$emit('CheckOk', id)
     },
@@ -75,17 +79,23 @@ export default {
           this.$emit('toget')
         }
       } else {
-        this.$notify({
-          message: '未登录，无法操作云端数据',
-          type: 'danger',
-          duration: 1000,
+        const newDataArry = []
+        JSON.parse(localStorage.getItem('todoList')).forEach((ditem) => {
+          if (ditem.id === item.id){
+            ditem = item
+          }
+          newDataArry.push(ditem)
         })
+        localStorage.setItem('todoList', JSON.stringify(newDataArry))
+        setTimeout(() => {
+          this.$emit('toget')
+        }, 500)
       }
     },
     dbcagList(e) {
-      if (this.$store.state.toChange) {
-        if (this.isCag) {
-          this.isCag = true
+      if (localStorage.getItem('toChange') === '1') {
+        if (this.Cagtodo) {
+          this.isCag = !this.isCag
           const cage = e.target
           document.addEventListener('click', (e) => {
             const ele = e.target
@@ -96,7 +106,7 @@ export default {
           })
         } else {
           this.$notify({
-            message: '不可编辑',
+            message: '不可编辑、已删除，快去新建任务吧!',
             type: 'danger',
             duration: 1300,
           })
@@ -138,10 +148,27 @@ export default {
     },
     item: {
       handler(newVal) {
-        this.cagVal = newVal.todo
-        if (newVal.finishi === 1) {
+        // console.log(newVal, newVal.finishi, newVal.upcoming, newVal.is_delete)
+        if (
+          newVal.finishi === 0 &&
+          newVal.upcoming === 0 &&
+          newVal.is_delete === 0
+        ) {
+          this.check = false
+          this.checks = false
+          this.Cagtodo = true
+          this.is_delete = true
+          // console.log('未完成、代办、可删除、可编辑、可选择')
+        } else if (newVal.finishi === 1 && newVal.is_delete === 0) {
           this.check = true
           this.checks = true
+          this.is_delete = true
+          this.Cagtodo = false
+          // console.log('完成、可删除、不可编辑、可以选择')
+        } else if (newVal.is_delete === 1) {
+          this.is_delete = false
+          this.Cagtodo = false
+          // console.log('删除、不可编辑、不可选择')
         }
       },
       immediate: true,
@@ -162,7 +189,7 @@ export default {
   position: relative;
   background-color: rgba(243, 203, 203, 0.457);
 }
-.list_item:hover .del_item{
+.list_item:hover .del_item {
   display: block;
   margin-left: 15px;
   font-size: 2rem;

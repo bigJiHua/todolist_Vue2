@@ -78,7 +78,6 @@ export default {
       this.overLogin()
     }
   },
-  method() {},
   methods: {
     logout() {
       if (
@@ -126,7 +125,7 @@ export default {
                     delete e.id
                     this.uploadd(e)
                   } else {
-                    localData.forEach((item, i) => {
+                    localData.forEach((item) => {
                       if (item.new && item.new === true) {
                         delete item.id
                         delete item.new
@@ -135,7 +134,6 @@ export default {
                     })
                   }
                 })
-                .catch(() => {})
             }
           })
           .catch(() => {
@@ -179,6 +177,7 @@ export default {
           location.reload()
         }
       }
+      location.reload()
     },
     async uploadd(todo) {
       if (todo !== undefined) {

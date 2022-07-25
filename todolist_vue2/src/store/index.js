@@ -21,8 +21,8 @@ export default new Vuex.Store({
       state.Upload = Up
     },
     toCountData(state, data) {
-      state.Count.finishi = data.finishi
-      state.Count.upcoming = data.upcoming
+      state.Count.finishi = data.upcoming
+      state.Count.upcoming = data.finishi
       state.Count.is_delete = data.is_delete
     },
   },

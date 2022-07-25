@@ -115,7 +115,7 @@ export default {
       if (this.newTodo !== '' && this.newTodo.length !== 0) {
         const todo = {
           id: this.TodoList.length,
-          username: localStorage.getItem('Username'),
+          username: localStorage.getItem('Username') === null ? 'location' : localStorage.getItem('Username'),
           todo: this.newTodo.substring(0, 25),
           finishi: 0,
           upcoming: 0,
@@ -146,7 +146,7 @@ export default {
           this.TodoList.push(todo)
           localStorage.setItem(
             'todoList',
-            JSON.stringify(this.TodoList.reverse())
+            JSON.stringify(this.TodoList)
           )
           this.newTodo = ''
         }, 800)
@@ -194,6 +194,9 @@ export default {
         newDataArry.push(item)
       })
       localStorage.setItem('todoList', JSON.stringify(newDataArry))
+      setTimeout(()=>{
+        this.getlist()
+      },500)
     },
     onRefresh() {
       this.getlist()
@@ -221,47 +224,61 @@ export default {
       this.getlist()
     },
     CountNum(met) {
-      this.TodoList = []
+      // 有Bug 本地数据会消失
+      this.Count.finishi = 0
+      this.Count.upcoming = 0
+      this.Count.is_delete = 0
+      JSON.parse(localStorage.getItem('todoList')).forEach((item) => {
+        // 删除数量
+        if (item.is_delete === 1) {
+          this.Count.is_delete += 1
+        }
+        // 完成数量
+        if (
+          (item.finishi === 1 && item.is_delete === 1) ||
+          (item.finishi === 1 && item.is_delete === 0)
+        ) {
+          this.Count.finishi += 1
+        }
+        // 代办数量
+        if (item.upcoming === 0 && item.is_delete === 0 && item.finishi === 0) {
+          this.Count.upcoming += 1
+        }
+      })
+      this.$store.dispatch('CountData', this.Count)
       switch (met) {
         case 'all': {
-          this.Count.finishi = 0
-          this.Count.upcoming = 0
-          this.Count.is_delete = 0
+          this.TodoList = []
           JSON.parse(localStorage.getItem('todoList')).forEach((item) => {
-            if (item.is_delete === 0 && item.finishi === 0) {
+            if (item.is_delete === 0 && item.finishi === 0 && item.upcoming === 0 || item.finishi === 1) {
               this.TodoList.push(item)
             }
-            // 删除数量
-            if (item.is_delete === 1) {
-              this.Count.is_delete += 1
-            }
-            // 完成数量
-            if (
-              item.finishi === 1 ||
-              (item.finishi === 1 && item.is_delete === 1)
-            ) {
-              this.Count.finishi += 1
-            }
-            // 代办数量
-            if (
-              item.upcoming === 0 &&
-              item.is_delete === 0 &&
-              item.finishi === 0
-            ) {
-              this.Count.upcoming += 1
+          })
+          break
+        }
+        case 'alls': {
+          this.TodoList = []
+          JSON.parse(localStorage.getItem('todoList')).forEach((item) => {
+            if (item.is_delete === 0 && item.finishi === 0 && item.upcoming === 0 || item.finishi === 1) {
+              this.TodoList.push(item)
             }
           })
           break
         }
         case 'finishi': {
+          this.TodoList = []
           JSON.parse(localStorage.getItem('todoList')).forEach((item) => {
-            if (item.finishi === 1) {
+            if (
+              item.finishi === 1 &&
+              item.upcoming === 0
+            ) {
               this.TodoList.push(item)
             }
           })
           break
         }
         case 'delete': {
+          this.TodoList = []
           JSON.parse(localStorage.getItem('todoList')).forEach((item) => {
             if (item.is_delete === 1) {
               this.TodoList.push(item)
@@ -270,8 +287,9 @@ export default {
           break
         }
         case 'remsinishi': {
+          this.TodoList = []
           JSON.parse(localStorage.getItem('todoList')).forEach((item) => {
-            if (item.finishi === 0) {
+            if (item.finishi === 0 && item.is_delete === 0) {
               this.TodoList.push(item)
             }
           })
@@ -279,23 +297,6 @@ export default {
         }
       }
     },
-  },
-  watch: {
-    // TodoList: {
-    //   handler(newVal) {
-    //     this.Count.todoCount = 0
-    //     newVal.forEach((item) => {
-    //       if (item.finishi === 0) {
-    //         console.log(item)
-    //         this.Count.todoCount += 1
-    //       } else {
-    //         this.Count.todoCount -= 1
-    //       }
-    //     })
-    //   },
-    //   immediate: true,
-    //   deep: true,
-    // },
   },
   name: 'Home',
   components: {
