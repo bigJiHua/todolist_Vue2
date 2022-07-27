@@ -63,11 +63,11 @@ export default {
       showup: false,
       show: false,
       msg: '',
-      elsepassword: '123456aaaa',
+      elsepassword: '',
       newUser: {
-        username: '4564aa',
-        password: '123456aaaa',
-        pic: 'https://jihau.top/img/logo.png',
+        username: '',
+        password: '',
+        pic: '',
       },
       rules: {
         username: {
