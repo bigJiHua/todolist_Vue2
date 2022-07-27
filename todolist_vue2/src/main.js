@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import App from './App.vue'
+import Meta from 'vue-meta'
 import router from './router'
 import store from './store'
 import Vant from 'vant';
@@ -12,6 +13,7 @@ VueTouch.registerCustomEvent('doubletap', {
 })
 Vue.use(VueTouch, {name: 'v-touch'})
 Vue.use(Vant)
+Vue.use(Meta)
 Vue.config.productionTip = true
 
 new Vue({
