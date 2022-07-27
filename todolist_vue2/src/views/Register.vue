@@ -11,6 +11,15 @@
           placeholder="请输入用户名 (6-12位且唯一)"
           required
         />
+        <p class="newuser">头像</p>
+        <small class="wran">(⚠ 只支持链接或者Base64编码格式)</small>
+        <input
+          type="text"
+          v-model="newUser.pic"
+          class="form-control login_input"
+          placeholder="粘贴用户头像Link"
+          required
+        />
         <p class="newuser">密码:<small class="wran">⚠必填</small></p>
         <input
           type="password"
@@ -28,6 +37,7 @@
           v-model="elsepassword"
         />
         <div class="btnmenu">
+          <van-button @click="comback" class="Loginbtn">返回</van-button>
           <van-button @click="newuser" v-show="!loading" class="Loginbtn"
             >注册</van-button
           >
@@ -37,8 +47,6 @@
             loading-text="注册中..."
             v-show="loading"
           />
-          <van-button @click="Login" class="Loginbtn">登录</van-button>
-          <van-button @click="comback" class="Loginbtn">返回</van-button>
         </div>
       </div>
     </div>
@@ -55,10 +63,11 @@ export default {
       showup: false,
       show: false,
       msg: '',
-      elsepassword: '123456aaa',
+      elsepassword: '123456aaaa',
       newUser: {
-        username: 'test01',
-        password: '123456aaa',
+        username: '4564aa',
+        password: '123456aaaa',
+        pic: 'https://jihau.top/img/logo.png',
       },
       rules: {
         username: {
@@ -79,16 +88,18 @@ export default {
         if (this.validata('password')) {
           if (this.newUser.password === this.elsepassword) {
             const { data: res } = await PostNewUser.UpnewUser(this.newUser)
-            const timer = setInterval(() => {
-              this.show = true
-              this.msg = res.message
-            }, 100)
-            setTimeout(() => {
-              clearInterval(timer)
-              this.show = false
-              this.loading = false
-              this.$router.push('/Login')
-            }, 2000)
+            if (res.status !== 202) {
+              const timer = setInterval(() => {
+                this.show = true
+                this.msg = res.message
+              }, 100)
+              setTimeout(() => {
+                clearInterval(timer)
+                this.show = false
+                this.loading = false
+                this.$router.push('/Login')
+              }, 2000)
+            }
           } else this.showPopup('两次密码不一致，请检查')
         }
       }
@@ -114,14 +125,14 @@ export default {
       }, 2000)
     },
     comback() {
-      const condel = confirm('放弃注册吗？')
-      if (condel) {
-        this.$router.back()
-      }
-    },
-    Login() {
-      this.$router.push('Login')
-    },
+      this.$dialog
+        .confirm({
+          message: '放弃注册吗？',
+        })
+        .then(async () => {
+          this.$router.back()
+        })
+    }
   },
   name: 'RegisterPage',
 }
@@ -264,7 +275,7 @@ export default {
   border: 0;
   height: 1.8rem;
 }
-  .popup{
-    padding: 10px;
-  }
+.popup {
+  padding: 10px;
+}
 </style>

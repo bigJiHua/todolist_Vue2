@@ -63,7 +63,7 @@ export default {
       isall: false,
       TodoList: [],
       newTodo: '',
-      checkupl: false,
+      checkupl: localStorage.getItem('Upload') === 0 ? false : true,
       loading: false,
       count: 0,
       Count: {
@@ -75,32 +75,32 @@ export default {
   },
   created() {
     this.getlist()
-    // 检查是否符合上传资格
-    this.checkuplsc()
     if (localStorage.getItem('toChange') === null) {
       localStorage.setItem('toChange', 0)
     }
   },
   methods: {
     async getlist() {
-      const { data: res } = await getTodolist.getTodolist()
-      // 不等于空空如也时
-      if (res.status !== 406) {
-        this.$notify({
-          message: res.message,
-          type: 'success',
-          duration: 1000,
-        })
-        this.$store.dispatch('CountData', this.Count)
-        localStorage.setItem('todoList', JSON.stringify(res.data.reverse()))
-      } else {
-        // 空空如也时
-        if (localStorage.getItem('todoList')) {
+      if (parseInt(localStorage.getItem('Login')) === 1) {
+        const { data: res } = await getTodolist.getTodolist()
+        if (res.status !== 406) {
           this.$notify({
-            message: '当前获取的是本地数据，无法进行云端操作',
+            message: res.message,
+            type: 'success',
+            duration: 1500,
+          })
+          this.$store.dispatch('CountData', this.Count)
+          localStorage.setItem('todoList', JSON.stringify(res.data.reverse()))
+        } else {
+          this.$notify({
+            message: '云端空空如也，当前获取的是本地数据',
             type: 'primary',
             duration: 1000,
           })
+        }
+      } else if(parseInt(localStorage.getItem('Login')) === 0 || !localStorage.getItem('Login')) {
+        if(localStorage.getItem('todoList') && localStorage.getItem('todoList').length > 0) {
+          this.TodoList = JSON.parse(localStorage.getItem('todoList'))
         } else {
           this.$notify({
             message: '空空如也',
@@ -109,13 +109,16 @@ export default {
           })
         }
       }
-      this.CountNum('all')
+      this.CountNum(localStorage.getItem('met'))
     },
     addTodo() {
       if (this.newTodo !== '' && this.newTodo.length !== 0) {
         const todo = {
           id: this.TodoList.length,
-          username: localStorage.getItem('Username') === null ? 'location' : localStorage.getItem('Username'),
+          username:
+            localStorage.getItem('Username') === null
+              ? 'location'
+              : localStorage.getItem('Username'),
           todo: this.newTodo.substring(0, 25),
           finishi: 0,
           upcoming: 0,
@@ -125,7 +128,7 @@ export default {
         }
         // 如果开启的上传云端
         setTimeout(async () => {
-          if (this.checkupl) {
+          if (this.checkupl && localStorage.getItem('Username') && localStorage.getItem('Upload')) {
             delete todo.new
             const { data: res } = await getTodolist.addTodolist(todo)
             if (res.status === 200) {
@@ -134,7 +137,9 @@ export default {
                 type: 'success',
                 duration: 1000,
               })
-              this.getlist()
+              setTimeout(() => {
+                this.getlist()
+              }, 1000)
             } else if (res.status === 406) {
               this.$notify({
                 message: res.message,
@@ -142,12 +147,16 @@ export default {
                 duration: 1000,
               })
             }
+          } else {
+            this.TodoList.push(todo)
+            this.$notify({
+              message: '添加成功',
+              type: 'success',
+              duration: 2000,
+            })
+            console.log(todo, this.TodoList)
           }
-          this.TodoList.push(todo)
-          localStorage.setItem(
-            'todoList',
-            JSON.stringify(this.TodoList)
-          )
+          localStorage.setItem('todoList', JSON.stringify(this.TodoList))
           this.newTodo = ''
         }, 800)
       } else {
@@ -162,7 +171,7 @@ export default {
           type: 'success',
           duration: 1000,
         })
-      } else if (res.status === 406) {
+      } else if (res.status === 202) {
         this.$notify({
           message: res.message,
           type: 'danger',
@@ -171,51 +180,53 @@ export default {
       }
     },
     CheckOk(id) {
-      const newDataArry = []
-      this.TodoList.forEach((item) => {
-        if (item.id === id) {
-          switch (item.finishi) {
-            case 0: {
-              item.finishi = 1
-              if (localStorage.getItem('Login')) {
-                this.patchList(item)
+      this.$dialog
+        .confirm({
+          message: '要进行变更吗？',
+        })
+        .then(async () => {
+          const newDataArry = []
+          JSON.parse(localStorage.getItem('todoList')).forEach((item) => {
+            if (item.id === id) {
+              switch (item.finishi) {
+                case 0: {
+                  item.finishi = 1
+                  item.upcoming = 1
+                  if (localStorage.getItem('Login')) {
+                    this.patchList(item)
+                  } else {
+                    newDataArry.push(item)
+                  }
+                  break
+                }
+                case 1: {
+                  item.finishi = 0
+                  item.upcoming = 0
+                  if (localStorage.getItem('Login')) {
+                    this.patchList(item)
+                  } else {
+                    newDataArry.push(item)
+                  }
+                  break
+                }
               }
-              break
+            } else {
+              newDataArry.push(item)
             }
-            case 1: {
-              item.finishi = 0
-              if (localStorage.getItem('Login')) {
-                this.patchList(item)
-              }
-              break
-            }
-          }
-        }
-        newDataArry.push(item)
-      })
-      localStorage.setItem('todoList', JSON.stringify(newDataArry))
-      setTimeout(()=>{
-        this.getlist()
-      },500)
+          })
+          localStorage.setItem('todoList', JSON.stringify(newDataArry))
+          setTimeout(() => {
+            this.getlist()
+          }, 2200)
+        })
+        .catch(() => {
+          this.getlist()
+        })
     },
     onRefresh() {
       this.getlist()
       this.loading = false
-      this.CountNum('all')
-    },
-    checkuplsc() {
-      if (
-        this.$store.state.Login !== 0 &&
-        parseInt(localStorage.getItem('Login')) !== 0 &&
-        localStorage.getItem('Login') &&
-        localStorage.getItem('Upload') &&
-        this.$store.state.Upload &&
-        parseInt(localStorage.getItem('Upload')) !== 0
-      ) {
-        this.checkupl = true
-      } else {
-        this.checkupl = false
-      }
+      this.CountNum(localStorage.getItem('met'))
     },
     checkAll() {
       this.isall = !this.isall
@@ -228,72 +239,96 @@ export default {
       this.Count.finishi = 0
       this.Count.upcoming = 0
       this.Count.is_delete = 0
-      JSON.parse(localStorage.getItem('todoList')).forEach((item) => {
-        // 删除数量
-        if (item.is_delete === 1) {
-          this.Count.is_delete += 1
-        }
-        // 完成数量
-        if (
-          (item.finishi === 1 && item.is_delete === 1) ||
-          (item.finishi === 1 && item.is_delete === 0)
-        ) {
-          this.Count.finishi += 1
-        }
-        // 代办数量
-        if (item.upcoming === 0 && item.is_delete === 0 && item.finishi === 0) {
-          this.Count.upcoming += 1
-        }
-      })
-      this.$store.dispatch('CountData', this.Count)
-      switch (met) {
-        case 'all': {
-          this.TodoList = []
-          JSON.parse(localStorage.getItem('todoList')).forEach((item) => {
-            if (item.is_delete === 0 && item.finishi === 0 && item.upcoming === 0 || item.finishi === 1) {
-              this.TodoList.push(item)
-            }
-          })
-          break
-        }
-        case 'alls': {
-          this.TodoList = []
-          JSON.parse(localStorage.getItem('todoList')).forEach((item) => {
-            if (item.is_delete === 0 && item.finishi === 0 && item.upcoming === 0 || item.finishi === 1) {
-              this.TodoList.push(item)
-            }
-          })
-          break
-        }
-        case 'finishi': {
-          this.TodoList = []
-          JSON.parse(localStorage.getItem('todoList')).forEach((item) => {
-            if (
-              item.finishi === 1 &&
-              item.upcoming === 0
-            ) {
-              this.TodoList.push(item)
-            }
-          })
-          break
-        }
-        case 'delete': {
-          this.TodoList = []
-          JSON.parse(localStorage.getItem('todoList')).forEach((item) => {
-            if (item.is_delete === 1) {
-              this.TodoList.push(item)
-            }
-          })
-          break
-        }
-        case 'remsinishi': {
-          this.TodoList = []
-          JSON.parse(localStorage.getItem('todoList')).forEach((item) => {
-            if (item.finishi === 0 && item.is_delete === 0) {
-              this.TodoList.push(item)
-            }
-          })
-          break
+      if (localStorage.getItem('todoList')) {
+        JSON.parse(localStorage.getItem('todoList')).forEach((item) => {
+          // 删除数量
+          if (item.is_delete === 1) {
+            this.Count.is_delete += 1
+          }
+          // 完成数量
+          if (
+            (item.finishi === 1 && item.is_delete === 1) ||
+            (item.finishi === 1 && item.is_delete === 0)
+          ) {
+            this.Count.finishi += 1
+          }
+          // 代办数量
+          if (
+            item.upcoming === 0 &&
+            item.is_delete === 0 &&
+            item.finishi === 0
+          ) {
+            this.Count.upcoming += 1
+          }
+        })
+        this.$store.dispatch('CountData', this.Count)
+        switch (met) {
+          case 'all': {
+            this.TodoList = []
+            JSON.parse(localStorage.getItem('todoList')).forEach((item) => {
+              if (
+                (item.is_delete === 0 &&
+                  item.upcoming === 0 &&
+                  item.is_delete === 0) ||
+                (item.finishi === 1 &&
+                  item.upcoming === 1 &&
+                  item.is_delete === 0)
+              ) {
+                this.TodoList.push(item)
+              }
+            })
+            localStorage.setItem('met', 'all')
+            break
+          }
+          case 'alls': {
+            this.TodoList = []
+            JSON.parse(localStorage.getItem('todoList')).forEach((item) => {
+              if (
+                (item.is_delete === 0 &&
+                  item.finishi === 0 &&
+                  item.upcoming === 0) ||
+                item.finishi === 1
+              ) {
+                this.TodoList.push(item)
+              }
+            })
+            localStorage.setItem('met', 'alls')
+            break
+          }
+          case 'finishi': {
+            this.TodoList = []
+            JSON.parse(localStorage.getItem('todoList')).forEach((item) => {
+              if (
+                item.finishi === 1 &&
+                item.upcoming === 1 &&
+                item.is_delete === 0
+              ) {
+                this.TodoList.push(item)
+              }
+            })
+            localStorage.setItem('met', 'finishi')
+            break
+          }
+          case 'delete': {
+            this.TodoList = []
+            JSON.parse(localStorage.getItem('todoList')).forEach((item) => {
+              if (item.is_delete === 1) {
+                this.TodoList.push(item)
+              }
+            })
+            localStorage.setItem('met', 'delete')
+            break
+          }
+          case 'remsinishi': {
+            this.TodoList = []
+            JSON.parse(localStorage.getItem('todoList')).forEach((item) => {
+              if (item.finishi === 0 && item.is_delete === 0) {
+                this.TodoList.push(item)
+              }
+            })
+            localStorage.setItem('met', 'remsinishi')
+            break
+          }
         }
       }
     },

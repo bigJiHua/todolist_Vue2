@@ -59,38 +59,44 @@ export default {
       this.checks = !this.checks
       this.$emit('CheckOk', id)
     },
-    async delItem(item) {
-      item.is_delete = 1
-      if (this.$store.state.Login === 1 && localStorage.getItem('token')) {
-        const { data: res } = await TodosApi.putTodolist(item)
-        if (res.status === 200) {
-          this.$notify({
-            message: res.message,
-            type: 'success',
-            duration: 1000,
-          })
-          this.$emit('toget')
-        } else if (res.status === 406) {
-          this.$notify({
-            message: res.message,
-            type: 'danger',
-            duration: 1000,
-          })
-          this.$emit('toget')
-        }
-      } else {
-        const newDataArry = []
-        JSON.parse(localStorage.getItem('todoList')).forEach((ditem) => {
-          if (ditem.id === item.id){
-            ditem = item
-          }
-          newDataArry.push(ditem)
+    delItem(item) {
+      this.$dialog
+        .confirm({
+          message: '确定完成了，要删除了吗？',
         })
-        localStorage.setItem('todoList', JSON.stringify(newDataArry))
-        setTimeout(() => {
-          this.$emit('toget')
-        }, 500)
-      }
+        .then(async () => {
+          item.is_delete = 1
+          if (this.$store.state.Login === 1 && localStorage.getItem('token')) {
+            const { data: res } = await TodosApi.putTodolist(item)
+            if (res.status === 200) {
+              this.$notify({
+                message: res.message,
+                type: 'success',
+                duration: 1000,
+              })
+              this.$emit('toget')
+            } else if (res.status === 406) {
+              this.$notify({
+                message: res.message,
+                type: 'danger',
+                duration: 1000,
+              })
+              this.$emit('toget')
+            }
+          } else {
+            const newDataArry = []
+            JSON.parse(localStorage.getItem('todoList')).forEach((ditem) => {
+              if (ditem.id === item.id) {
+                ditem = item
+              }
+              newDataArry.push(ditem)
+            })
+            localStorage.setItem('todoList', JSON.stringify(newDataArry))
+            setTimeout(() => {
+              this.$emit('toget')
+            }, 500)
+          }
+        })
     },
     dbcagList(e) {
       if (localStorage.getItem('toChange') === '1') {
@@ -105,11 +111,19 @@ export default {
             }
           })
         } else {
-          this.$notify({
-            message: '不可编辑、已删除，快去新建任务吧!',
-            type: 'danger',
-            duration: 1300,
-          })
+          if (localStorage.getItem('met') === 'finishi') {
+            this.$notify({
+              message: '已经完成，快去新建任务吧!',
+              type: 'danger',
+              duration: 1300,
+            })
+          } else if (localStorage.getItem('met') === 'delete') {
+            this.$notify({
+              message: '已删除咯，快去新建任务吧!',
+              type: 'danger',
+              duration: 1300,
+            })
+          }
         }
       } else {
         this.$notify({
@@ -185,13 +199,12 @@ export default {
   padding: 5px 30px;
   border-radius: 8px;
   width: 80%;
-  margin: 15px auto;
+  margin: 20px auto;
   position: relative;
   background-color: rgba(243, 203, 203, 0.457);
 }
 .list_item:hover .del_item {
   display: block;
-  margin-left: 15px;
   font-size: 2rem;
   color: rgba(247, 51, 64, 0.9);
   font-weight: 500;
@@ -241,5 +254,8 @@ export default {
 }
 .things::-webkit-scrollbar {
   display: none;
+}
+.time{
+  float: right;
 }
 </style>

@@ -51,8 +51,8 @@ import PostLogin from '@/components/API/User'
 export default {
   data() {
     return {
-      username: 'test01',
-      password: '123456aaa',
+      username: '',
+      password: '',
       loading: false,
       show: false,
       msg: '正在登录',
@@ -90,6 +90,7 @@ export default {
               localStorage.setItem('Login', 1)
               localStorage.setItem('token', res.token)
               localStorage.setItem('Username', res.data.username)
+              localStorage.setItem('pic', res.data.pic)
               localStorage.setItem('Upload', res.data.upload)
               localStorage.setItem('toChange', res.data.toChange)
               this.$store.commit('Upload', res.data.upload)
@@ -101,7 +102,7 @@ export default {
                 this.show = false
                 this.loading = false
                 this.$router.push('/User')
-                // location.reload()
+                location.reload()
               }, this.setTime)
             } else {
               this.showPopup(res.message)

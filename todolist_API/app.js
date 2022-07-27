@@ -41,9 +41,9 @@ app.use(
 const todo_router = require('./router/todo')
 const Uers_router = require('./router/Users')
 // api 获取数据
-app.use('/api',todo_router)
+app.use('/todo/api',todo_router)
 // my 登录 注册
-app.use('/my',Uers_router)
+app.use('/todo/my',Uers_router)
 
 
 

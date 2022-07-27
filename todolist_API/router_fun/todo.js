@@ -1,4 +1,5 @@
 const db = require('../database/db')
+const setting = require('../setting')
 // 获取用户代办
 exports.gettodolist = (req,res) => {
     const user = req.query.user
@@ -12,7 +13,7 @@ exports.gettodolist = (req,res) => {
         res.status(200).send({
             status: 200,
             data: results,
-            message: '获取成功'
+            message: '获取成功啦! 距离时间久的记得尽快完成噢!'
         })
     })
 }
@@ -44,7 +45,7 @@ exports.setSetting = (req,res) => {
                 if(results.length === 0) return res.status(200).send({
                     status: 200,
                     message: '设置成功',
-                    length: 10,
+                    length: setting.row,
                     data: []
                 })
                 res.status(200).send({
@@ -65,17 +66,17 @@ exports.addtodolist = (req,res) => {
         if (err) return res.cc(err, 404)
         if (results.length === 0) return res.cc('用户不存在', 404)
         if (results[0].upload === 1) {
-            const sql = `select * from ev_todo where username=?`
+            const sql = `select * from ev_todo where username=? and finishi = 0 and is_delete=0`
             db.query(sql,user,(err,results)=>{
                 if (err) return res.cc(err)
-                if (results.length < 10) {
+                if (results.length < setting.row) {
                     const sql = `insert into ev_todo set ?`
                     db.query(sql,data,(err,results)=>{
                         if (err) return res.cc(err)
-                        if (results.affectedRows !== 1) return res.cc('添加失败')
+                        if (results.affectedRows !== 1) return res.cc('添加失败啦，记住代办刷新一下重新添加吧!')
                         res.status(200).send({
                             status: 200,
-                            message: '添加成功'
+                            message: '添加成功,记得及时完成噢！'
                         })
                     })
                 } else {
@@ -96,14 +97,37 @@ exports.cagtodolist = (req,res) => {
     db.query(sql,username,(err,results)=>{
         if(err) return res.cc(err)
         if(results.length === 0 ) return res.cc('非法用户', 406)
-        const sql = `update ev_todo set ? where username=? and id=?`
-        db.query(sql,[todo,username,id],(err,results)=>{
-            if(err) return res.cc(err)
-            if(results.affectedRows !== 1 ) return res.cc('修改失败,请同步至数据库再进行修改', 406)
-            res.status(200).send({
-                status: 200,
-                message: '修改成功'
+        if(parseInt(todo.finishi) === 0) {
+            const sql = `select * from ev_todo where username=? and finishi = 0 and upcoming = 0 and is_delete = 0`
+            db.query(sql,username,(err,results)=>{
+                if(err) return res.cc(err)
+                if(results.length < setting.row) {
+                    const sql = `update ev_todo set ? where username=? and id=?`
+                    db.query(sql,[todo,username,id],(err,results)=>{
+                        if(err) return res.cc(err)
+                        if(results.affectedRows !== 1 ) return res.cc('修改失败,请同步至数据库再进行修改', 406)
+                        res.status(200).send({
+                            status: 200,
+                            message: '忘记有什么没做嗷... 继续努力嗷! '
+                        })
+                    })
+                } else {
+                    res.status(202).send({
+                        status: 202,
+                        message: '不能贪心嗷！！！代办列表已经满了嗷!'
+                    })
+                }
             })
-        })
+        } else {
+            const sql = `update ev_todo set ? where username=? and id=?`
+            db.query(sql,[todo,username,id],(err,results)=>{
+                if(err) return res.cc(err)
+                if(results.affectedRows !== 1 ) return res.cc('修改失败,请同步至数据库再进行修改', 406)
+                res.status(200).send({
+                    status: 200,
+                    message: '恭喜你完成啦! 继续努力嗷! '
+                })
+            })
+        }
     })
 }

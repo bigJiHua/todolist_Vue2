@@ -1,8 +1,10 @@
 // APi设置面板
 // API端口
-const kuo = 80
+const kuo = 30907
 // 不进行token验证的子口
-const api = [/^\/my|^\/api/]
+const api = [/^\/todo\/my\//]
+// 允许用户上传的条数
+const row = 10
 /*　生成格式化日期 */
 const dayjs = require('dayjs')
 let d = new Date()
@@ -26,4 +28,5 @@ module.exports={
     pub_date,
     pub_month,
     generateMixed,
+    row
 }

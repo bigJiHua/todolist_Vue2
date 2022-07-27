@@ -4,7 +4,21 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="373a9777-0c4b-4196-9431-7f756c40cf8c" name="变更" comment="7-13完善登录注册接口" />
+    <list default="true" id="373a9777-0c4b-4196-9431-7f756c40cf8c" name="变更" comment="7-13完善登录注册接口">
+      <change afterPath="$PROJECT_DIR$/todolist_API.zip" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app.js" beforeDir="false" afterPath="$PROJECT_DIR$/app.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/database/db.js" beforeDir="false" afterPath="$PROJECT_DIR$/database/db.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/router_fun/todo.js" beforeDir="false" afterPath="$PROJECT_DIR$/router_fun/todo.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/schema/Users.js" beforeDir="false" afterPath="$PROJECT_DIR$/schema/Users.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/setting.js" beforeDir="false" afterPath="$PROJECT_DIR$/setting.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../todolist_vue2/public/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/../todolist_vue2/public/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../todolist_vue2/src/components/Module/List_item.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../todolist_vue2/src/components/Module/List_item.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../todolist_vue2/src/views/Home.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../todolist_vue2/src/views/Home.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../todolist_vue2/src/views/Login.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../todolist_vue2/src/views/Login.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../todolist_vue2/src/views/Register.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../todolist_vue2/src/views/Register.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../todolist_vue2/src/views/User.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../todolist_vue2/src/views/User.vue" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -43,7 +57,7 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../../node/api111/api" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.selected.package.eslint" value="(autodetect)" />
@@ -88,7 +102,8 @@
       <workItem from="1658326689307" duration="32000" />
       <workItem from="1658326732956" duration="110000" />
       <workItem from="1658327363157" duration="70000" />
-      <workItem from="1658327446433" duration="25593000" />
+      <workItem from="1658327446433" duration="27078000" />
+      <workItem from="1658907218030" duration="8682000" />
     </task>
     <task id="LOCAL-00001" summary="new API Object">
       <created>1656606843048</created>

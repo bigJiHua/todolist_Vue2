@@ -4,7 +4,8 @@
     <div class="user-card">
       <ul class="van-cell">
         <li class="li_demo avatar">
-          <img src="https://jihau.top/img/logo.png" alt="头像" />
+          <img :src="pic" alt="头像" v-if="pic" />
+          <img src="https://jihau.top/img/logo.png" alt="头像" v-else />
         </li>
         <li v-if="isLogin" class="li_demo">
           <span class="username">欢迎{{ User }}</span>
@@ -41,6 +42,7 @@
           <van-switch :value="change" size="24" @click="toChange" />
         </template>
       </van-cell>
+      <van-cell icon="warning-o" title="清除本地记录" @click="clearTodoList" />
       <van-cell
         icon="warning-o"
         title="退出登录"
@@ -59,6 +61,7 @@ export default {
     return {
       isLogin: localStorage.getItem('Username') ? true : false,
       User: localStorage.getItem('Username'),
+      pic: localStorage.getItem('pic'),
       checked: localStorage.getItem('Upload') === '0' ? false : true,
       change: this.$store.state.toChange,
       length: 0,
@@ -121,18 +124,16 @@ export default {
                 .then(() => {
                   const localData = JSON.parse(localStorage.getItem('todoList'))
                   // 如果当前用户在云端数据为0 则新插入数据
-                  if (this.length === 0) {
-                    delete e.id
-                    this.uploadd(e)
-                  } else {
-                    localData.forEach((item) => {
-                      if (item.new && item.new === true) {
-                        delete item.id
-                        delete item.new
-                        this.uploadd(item)
-                      }
-                    })
-                  }
+                  localData.forEach((item, index) => {
+                    if (item.new && item.new === true && item.finishi === 0) {
+                      delete item.id
+                      delete item.new
+                      this.uploadd(item)
+                    } else if (item.is_delete === 1) {
+                      localData.splice(index, 1)
+                      console.log(localData)
+                    }
+                  })
                 })
             }
           })
@@ -227,6 +228,15 @@ export default {
       localStorage.removeItem('Username')
       this.$router.push('/Login')
       location.reload()
+    },
+    clearTodoList() {
+      this.$dialog
+        .confirm({
+          message: '确定清除本地记录吗？数据同步后依然存在嗷!',
+        })
+        .then(async () => {
+          localStorage.removeItem('todoList')
+        })
     },
   },
   watch: {},
