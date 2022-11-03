@@ -57,7 +57,7 @@
 <script>
 import PostNewUser from '@/components/API/User'
 export default {
-  data() {
+  data () {
     return {
       loading: false,
       showup: false,
@@ -67,22 +67,22 @@ export default {
       newUser: {
         username: '',
         password: '',
-        pic: '',
+        pic: ''
       },
       rules: {
         username: {
           rule: /^\w{6,12}$/,
-          msg: '用户名必须为字母开头6-12位',
+          msg: '用户名必须为字母开头6-12位'
         },
         password: {
           rule: /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{8,16}$/,
-          msg: '密码不能位空,必须为8-16位非空、非纯字符密码',
-        },
-      },
+          msg: '密码不能位空,必须为8-16位非空、非纯字符密码'
+        }
+      }
     }
   },
   methods: {
-    async newuser() {
+    async newuser () {
       this.loading = !this.loading
       if (this.validata('username')) {
         if (this.validata('password')) {
@@ -104,7 +104,7 @@ export default {
         }
       }
     },
-    validata(key) {
+    validata (key) {
       let bool = true
       if (!this.rules[key].rule.test(this.newUser[key])) {
         this.showPopup(this.rules[key].msg)
@@ -113,7 +113,7 @@ export default {
       }
       return bool
     },
-    showPopup(msg) {
+    showPopup (msg) {
       const timer = setInterval(() => {
         this.show = true
         this.msg = msg
@@ -124,17 +124,17 @@ export default {
         this.loading = false
       }, 2000)
     },
-    comback() {
+    comback () {
       this.$dialog
         .confirm({
-          message: '放弃注册吗？',
+          message: '放弃注册吗？'
         })
         .then(async () => {
           this.$router.back()
         })
     }
   },
-  name: 'RegisterPage',
+  name: 'RegisterPage'
 }
 </script>
 

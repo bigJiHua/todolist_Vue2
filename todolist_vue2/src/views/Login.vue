@@ -49,10 +49,10 @@
 import PostLogin from '@/components/API/User'
 
 export default {
-  data() {
+  data () {
     return {
-      username: '',
-      password: '',
+      username: 'JiHua',
+      password: '58239641ok.com',
       loading: false,
       show: false,
       msg: '正在登录',
@@ -60,17 +60,17 @@ export default {
       rules: {
         username: {
           rule: /^\S/,
-          msg: '用户名不能为空!且长度为6-12位',
+          msg: '用户名不能为空!且长度为6-12位'
         },
         password: {
           rule: /^\S{6,12}/,
-          msg: '密码不能为空!且长度为6-12位',
-        },
-      },
+          msg: '密码不能为空!且长度为6-12位'
+        }
+      }
     }
   },
   methods: {
-    async login() {
+    async login () {
       // 验证是否已经拥有token
       if (!localStorage.getItem('token')) {
         // 验证输入的用户名是否合法
@@ -124,7 +124,7 @@ export default {
         }, this.setTime)
       }
     },
-    register() {
+    register () {
       // 打开开关
       this.show = true
       this.loading = true
@@ -142,7 +142,7 @@ export default {
         this.$router.push('/register')
       }
     },
-    validata(key) {
+    validata (key) {
       let bool = true
       if (!this.rules[key].rule.test(this[key])) {
         this.show = true
@@ -152,7 +152,7 @@ export default {
       }
       return bool
     },
-    showPopup(msg) {
+    showPopup (msg) {
       const timer = setInterval(() => {
         this.show = true
         this.msg = msg
@@ -163,11 +163,11 @@ export default {
         this.loading = false
       }, this.setTime)
     },
-    toback() {
+    toback () {
       this.$router.back()
-    },
+    }
   },
-  name: 'LoginPage',
+  name: 'LoginPage'
 }
 </script>
 

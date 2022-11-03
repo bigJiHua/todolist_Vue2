@@ -9,7 +9,7 @@
 import FooterBar from './components/FooterBar/FooterBar'
 
 export default {
-  name: 'APP', 
+  name: 'APP',
   metaInfo: {
     title: 'JiHua·记事本',
     meta: [
@@ -50,8 +50,8 @@ export default {
     ]
   },
   components: {
-    FooterBar,
-  },
+    FooterBar
+  }
 }
 </script>
 

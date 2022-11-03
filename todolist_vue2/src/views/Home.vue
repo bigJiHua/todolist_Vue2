@@ -33,15 +33,19 @@
       <div class="bottom_Count">
         <div class="Center_Count">
           <p>
-            <span @click="CountNum('all')">代办&nbsp;</span>{{ Count.upcoming }}
+            <van-button @click="CountNum('all')"
+              >代办&nbsp;{{ Count.upcoming }}</van-button
+            >
           </p>
           <p>
-            <span @click="CountNum('finishi')">&nbsp;完成&nbsp;</span
-            >{{ Count.finishi }}
+            <van-button @click="CountNum('finishi')"
+              >&nbsp;完成&nbsp;{{ Count.finishi }}</van-button
+            >
           </p>
           <p>
-            <span @click="CountNum('delete')">&nbsp;删除&nbsp;</span
-            >{{ Count.is_delete }}
+            <van-button @click="CountNum('delete')">
+              &nbsp;删除&nbsp;{{ Count.is_delete }}
+            </van-button>
           </p>
         </div>
         <div class="checkBox">
@@ -58,36 +62,36 @@
 import todolist from '@/components/Module/List_item.vue'
 import getTodolist from '@/components/API/getTodoList'
 export default {
-  data() {
+  data () {
     return {
       isall: false,
       TodoList: [],
       newTodo: '',
-      checkupl: localStorage.getItem('Upload') === 0 ? false : true,
+      checkupl: localStorage.getItem('Upload') !== 0,
       loading: false,
       count: 0,
       Count: {
         finishi: this.$store.state.Count.finishi,
         upcoming: this.$store.state.Count.upcoming,
-        is_delete: this.$store.state.Count.is_delete,
-      },
+        is_delete: this.$store.state.Count.is_delete
+      }
     }
   },
-  created() {
+  created () {
     this.getlist()
     if (localStorage.getItem('toChange') === null) {
       localStorage.setItem('toChange', 0)
     }
   },
   methods: {
-    async getlist() {
+    async getlist () {
       if (parseInt(localStorage.getItem('Login')) === 1) {
         const { data: res } = await getTodolist.getTodolist()
         if (res.status !== 406) {
           this.$notify({
             message: res.message,
             type: 'success',
-            duration: 1500,
+            duration: 1500
           })
           this.$store.dispatch('CountData', this.Count)
           localStorage.setItem('todoList', JSON.stringify(res.data.reverse()))
@@ -95,23 +99,14 @@ export default {
           this.$notify({
             message: '云端空空如也，当前获取的是本地数据',
             type: 'primary',
-            duration: 1000,
-          })
-        }
-      } else if(parseInt(localStorage.getItem('Login')) === 0 || !localStorage.getItem('Login')) {
-        if(localStorage.getItem('todoList') && localStorage.getItem('todoList').length > 0) {
-          this.TodoList = JSON.parse(localStorage.getItem('todoList'))
-        } else {
-          this.$notify({
-            message: '空空如也',
-            type: 'primary',
-            duration: 1000,
+            duration: 1000
           })
         }
       }
+      this.TodoList = JSON.parse(localStorage.getItem('todoList'))
       this.CountNum(localStorage.getItem('met'))
     },
-    addTodo() {
+    addTodo () {
       if (this.newTodo !== '' && this.newTodo.length !== 0) {
         const todo = {
           id: this.TodoList.length,
@@ -124,18 +119,22 @@ export default {
           upcoming: 0,
           is_delete: 0,
           time: new Date().getTime(),
-          new: true,
+          new: true
         }
         // 如果开启的上传云端
         setTimeout(async () => {
-          if (this.checkupl && localStorage.getItem('Username') && localStorage.getItem('Upload')) {
+          if (
+            this.checkupl &&
+            localStorage.getItem('Username') &&
+            localStorage.getItem('Upload')
+          ) {
             delete todo.new
             const { data: res } = await getTodolist.addTodolist(todo)
             if (res.status === 200) {
               this.$notify({
                 message: res.message,
                 type: 'success',
-                duration: 1000,
+                duration: 1000
               })
               setTimeout(() => {
                 this.getlist()
@@ -144,7 +143,7 @@ export default {
               this.$notify({
                 message: res.message,
                 type: 'danger',
-                duration: 1000,
+                duration: 1000
               })
             }
           } else {
@@ -152,7 +151,7 @@ export default {
             this.$notify({
               message: '添加成功',
               type: 'success',
-              duration: 2000,
+              duration: 2000
             })
             console.log(todo, this.TodoList)
           }
@@ -163,26 +162,26 @@ export default {
         alert('輸入的值不能爲空哦！')
       }
     },
-    async patchList(data) {
+    async patchList (data) {
       const { data: res } = await getTodolist.putTodolist(data)
       if (res.status === 200) {
         this.$notify({
           message: res.message,
           type: 'success',
-          duration: 1000,
+          duration: 1000
         })
       } else if (res.status === 202) {
         this.$notify({
           message: res.message,
           type: 'danger',
-          duration: 1000,
+          duration: 1000
         })
       }
     },
-    CheckOk(id) {
+    CheckOk (id) {
       this.$dialog
         .confirm({
-          message: '要进行变更吗？',
+          message: '要进行变更吗？'
         })
         .then(async () => {
           const newDataArry = []
@@ -223,18 +222,18 @@ export default {
           this.getlist()
         })
     },
-    onRefresh() {
+    onRefresh () {
       this.getlist()
       this.loading = false
       this.CountNum(localStorage.getItem('met'))
     },
-    checkAll() {
+    checkAll () {
       this.isall = !this.isall
     },
-    toget() {
+    toget () {
       this.getlist()
     },
-    CountNum(met) {
+    CountNum (met) {
       // 有Bug 本地数据会消失
       this.Count.finishi = 0
       this.Count.upcoming = 0
@@ -267,12 +266,9 @@ export default {
             this.TodoList = []
             JSON.parse(localStorage.getItem('todoList')).forEach((item) => {
               if (
-                (item.is_delete === 0 &&
-                  item.upcoming === 0 &&
-                  item.is_delete === 0) ||
-                (item.finishi === 1 &&
-                  item.upcoming === 1 &&
-                  item.is_delete === 0)
+                item.is_delete === 0 &&
+                item.upcoming === 0 &&
+                item.is_delete === 0
               ) {
                 this.TodoList.push(item)
               }
@@ -331,12 +327,12 @@ export default {
           }
         }
       }
-    },
+    }
   },
-  name: 'Home',
+  name: 'HomeModule',
   components: {
-    todolist,
-  },
+    todolist
+  }
 }
 </script>
 

@@ -6,12 +6,12 @@
 
 <script>
 export default {
-  data() {
+  data () {
     return {}
   },
   methods: {},
-  name: 'Header',
-  components: {},
+  name: 'HeaderModule',
+  components: {}
 }
 </script>
 

@@ -19,7 +19,7 @@ const putTodolist = function (data) {
   return request.patch('/api/cagtodo', Params)
 }
 // 设置是否开启上传
-const setSetting = function (met,set) {
+const setSetting = function (met, set) {
   const Params = new URLSearchParams()
   Params.append('met', met)
   Params.append('username', localStorage.getItem('Username'))
@@ -30,5 +30,5 @@ export default {
   getTodolist,
   addTodolist,
   putTodolist,
-  setSetting,
+  setSetting
 }

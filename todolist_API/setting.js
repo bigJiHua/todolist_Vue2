@@ -1,6 +1,6 @@
 // APi设置面板
 // API端口
-const kuo = 30907
+const kuo = 80
 // 不进行token验证的子口
 const api = [/^\/todo\/my\//]
 // 允许用户上传的条数

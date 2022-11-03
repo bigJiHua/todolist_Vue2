@@ -23,12 +23,17 @@ const routes = [
     path: '/register',
     name: 'register',
     component: () => import('../views/Register.vue')
+  },
+  {
+    path: '/history',
+    name: 'history',
+    component: () => import('../views/History.vue')
   }
 ]
 
 const router = new VueRouter({
   routes,
-  mode: 'history',
+  mode: 'history'
 })
 
 export default router

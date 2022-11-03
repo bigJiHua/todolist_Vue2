@@ -37,32 +37,34 @@ export default {
   props: {
     isall: {
       type: Boolean,
-      default: false,
+      default: false
     },
     item: {
       type: Object,
-      default: {},
-    },
+      default () {
+        return {}
+      }
+    }
   },
-  data() {
+  data () {
     return {
       check: false,
       checks: false,
       isCag: false,
       Cagtodo: false,
       cagVal: this.item.todo,
-      is_delete: true,
+      is_delete: true
     }
   },
   methods: {
-    checkOk(id) {
+    checkOk (id) {
       this.checks = !this.checks
       this.$emit('CheckOk', id)
     },
-    delItem(item) {
+    delItem (item) {
       this.$dialog
         .confirm({
-          message: '确定完成了，要删除了吗？',
+          message: '确定完成了，要删除了吗？'
         })
         .then(async () => {
           item.is_delete = 1
@@ -72,14 +74,14 @@ export default {
               this.$notify({
                 message: res.message,
                 type: 'success',
-                duration: 1000,
+                duration: 1000
               })
               this.$emit('toget')
             } else if (res.status === 406) {
               this.$notify({
                 message: res.message,
                 type: 'danger',
-                duration: 1000,
+                duration: 1000
               })
               this.$emit('toget')
             }
@@ -98,7 +100,7 @@ export default {
           }
         })
     },
-    dbcagList(e) {
+    dbcagList (e) {
       if (localStorage.getItem('toChange') === '1') {
         if (this.Cagtodo) {
           this.isCag = !this.isCag
@@ -115,13 +117,13 @@ export default {
             this.$notify({
               message: '已经完成，快去新建任务吧!',
               type: 'danger',
-              duration: 1300,
+              duration: 1300
             })
           } else if (localStorage.getItem('met') === 'delete') {
             this.$notify({
               message: '已删除咯，快去新建任务吧!',
               type: 'danger',
-              duration: 1300,
+              duration: 1300
             })
           }
         }
@@ -129,20 +131,20 @@ export default {
         this.$notify({
           message: '双击快速编辑功能未开启，请到我的页面点击开启此功能吧!',
           type: 'danger',
-          duration: 1300,
+          duration: 1300
         })
       }
     },
-    cagList(item) {
+    cagList (item) {
       this.isCag = !this.isCag
       if (item.todo !== this.cagVal) {
         item.todo = this.cagVal.substring(0, 25)
         this.$emit('cagList', item)
       }
-    },
+    }
   },
   computed: {
-    time() {
+    time () {
       const time = new Date().getTime() - this.item.time
       if (Math.floor(time / (60 * 1000)) === 0) {
         return '刚刚'
@@ -153,7 +155,7 @@ export default {
       } else {
         return Math.floor(time / (60 * 1000)) + ' 分钟前'
       }
-    },
+    }
   },
   // 监听器
   watch: {
@@ -161,7 +163,7 @@ export default {
       this.check = this.isall
     },
     item: {
-      handler(newVal) {
+      handler (newVal) {
         // console.log(newVal, newVal.finishi, newVal.upcoming, newVal.is_delete)
         if (
           newVal.finishi === 0 &&
@@ -186,10 +188,10 @@ export default {
         }
       },
       immediate: true,
-      deep: true,
-    },
+      deep: true
+    }
   },
-  name: 'ListItem',
+  name: 'ListItem'
 }
 </script>
 
