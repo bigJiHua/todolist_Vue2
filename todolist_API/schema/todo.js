@@ -32,3 +32,9 @@ exports.setSetting = {
         met // 设置项
     }
 }
+
+exports.getHistodo = {
+    body:{
+        username
+    }
+}

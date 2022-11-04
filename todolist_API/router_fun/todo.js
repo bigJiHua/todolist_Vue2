@@ -57,7 +57,7 @@ exports.setSetting = (req,res) => {
         })
     })
 }
-// 添加数据
+// 添加事件
 exports.addtodolist = (req,res) => {
     const user = req.body.username
     const data = JSON.parse(req.body.todo)
@@ -92,6 +92,7 @@ exports.addtodolist = (req,res) => {
 exports.cagtodolist = (req,res) => {
     const username = req.body.username
     const todo = JSON.parse(req.body.ctodo)
+    console.log(req.body.ctodo)
     const id = todo.id
     const sql = `select * from ev_users where username=?`
     db.query(sql,username,(err,results)=>{
@@ -114,7 +115,7 @@ exports.cagtodolist = (req,res) => {
                 } else {
                     res.status(202).send({
                         status: 202,
-                        message: '不能贪心嗷！！！代办列表已经满了嗷!'
+                        message: '代办列表已经满了嗷! 先去把未完成的代办加快速度哟！'
                     })
                 }
             })
@@ -129,5 +130,19 @@ exports.cagtodolist = (req,res) => {
                 })
             })
         }
+    })
+}
+
+// 获取历史完成
+exports.getHistodo = (req,res) => {
+    const username = req.body.username
+    const sql = `select * from ev_todo where username = ? and finishi = 1 or upcoming = 1`
+    db.query(sql,username,(err,results) => {
+        if (err) return res.cc(err)
+        if (results.length === 0) return res.cc('空空如也，快去完成你的第一个任务吧！',206)
+        res.send({
+            status: 200,
+            data: results
+        })
     })
 }

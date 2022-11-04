@@ -7,10 +7,14 @@ import Vant from 'vant'
 import 'vant/lib/index.css'
 import './assets/css/index.css'
 import VueTouch from 'vue-touch'
+import dayjs from 'dayjs'
+
 VueTouch.registerCustomEvent('doubletap', {
   type: 'tap',
   taps: 2
 })
+
+Vue.prototype.dayjs = dayjs
 Vue.use(VueTouch, { name: 'v-touch' })
 Vue.use(Vant)
 Vue.use(Meta)

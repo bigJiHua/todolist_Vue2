@@ -6,12 +6,12 @@
   <component name="ChangeListManager">
     <list default="true" id="373a9777-0c4b-4196-9431-7f756c40cf8c" name="变更" comment="7-13完善登录注册接口">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/db.js" beforeDir="false" afterPath="$PROJECT_DIR$/database/db.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/setting.js" beforeDir="false" afterPath="$PROJECT_DIR$/setting.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/todolist_API.zip" beforeDir="false" afterPath="$PROJECT_DIR$/todolist_API.zip" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../todolist_vue2/src/components/request/request.js" beforeDir="false" afterPath="$PROJECT_DIR$/../todolist_vue2/src/components/request/request.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config.js" beforeDir="false" afterPath="$PROJECT_DIR$/config.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/router/todo.js" beforeDir="false" afterPath="$PROJECT_DIR$/router/todo.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/router_fun/todo.js" beforeDir="false" afterPath="$PROJECT_DIR$/router_fun/todo.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/schema/todo.js" beforeDir="false" afterPath="$PROJECT_DIR$/schema/todo.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../todolist_vue2/src/views/History.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../todolist_vue2/src/views/History.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../todolist_vue2/src/views/Login.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../todolist_vue2/src/views/Login.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../todolist_vue2/src/views/User.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../todolist_vue2/src/views/User.vue" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -35,13 +35,6 @@
       <filtered-out-file-type name="TAG" />
       <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
     </file-type-list>
-  </component>
-  <component name="GithubProjectSettings">
-    <option name="branchProtectionPatterns">
-      <list>
-        <option value="main" />
-      </list>
-    </option>
   </component>
   <component name="ProjectId" id="2BIq3CkKjBsMDKvtqJZ073ZpXQM" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true">
@@ -110,7 +103,7 @@
       <workItem from="1663583855755" duration="79000" />
       <workItem from="1663671473341" duration="50000" />
       <workItem from="1667352176673" duration="2233000" />
-      <workItem from="1667355414421" duration="3618000" />
+      <workItem from="1667355414421" duration="11443000" />
     </task>
     <task id="LOCAL-00001" summary="new API Object">
       <created>1656606843048</created>

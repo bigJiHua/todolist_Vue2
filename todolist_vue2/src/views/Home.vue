@@ -87,7 +87,19 @@ export default {
     async getlist () {
       if (parseInt(localStorage.getItem('Login')) === 1) {
         const { data: res } = await getTodolist.getTodolist()
-        if (res.status !== 406) {
+        if (res.status === 401) {
+          this.$notify({
+            message: '登录过期，当前数据是本地数据',
+            type: 'success',
+            duration: 2200
+          })
+          localStorage.removeItem('Login')
+          localStorage.removeItem('Upload')
+          localStorage.removeItem('toChange')
+          localStorage.removeItem('Count')
+          localStorage.removeItem('token')
+          localStorage.removeItem('Username')
+        } else if (res.status !== 406) {
           this.$notify({
             message: res.message,
             type: 'success',
@@ -186,6 +198,7 @@ export default {
         .then(async () => {
           const newDataArry = []
           JSON.parse(localStorage.getItem('todoList')).forEach((item) => {
+            item.ftime = String(new Date().getTime())
             if (item.id === id) {
               switch (item.finishi) {
                 case 0: {

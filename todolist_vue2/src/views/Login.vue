@@ -101,7 +101,7 @@ export default {
                 clearInterval(timer)
                 this.show = false
                 this.loading = false
-                this.$router.push('/User')
+                this.$router.push('/')
                 location.reload()
               }, this.setTime)
             } else {

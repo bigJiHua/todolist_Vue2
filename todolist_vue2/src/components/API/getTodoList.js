@@ -26,9 +26,16 @@ const setSetting = function (met, set) {
   Params.append('settings', set)
   return request.patch('/api/Setting', Params)
 }
+// 获取历史代办
+const getHistory = function () {
+  const Params = new URLSearchParams()
+  Params.append('username', localStorage.getItem('Username'))
+  return request.post('/api/histodo', Params)
+}
 export default {
   getTodolist,
   addTodolist,
   putTodolist,
-  setSetting
+  setSetting,
+  getHistory
 }

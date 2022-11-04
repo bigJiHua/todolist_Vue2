@@ -8,5 +8,6 @@ router.get('/todolist',todolist_func.gettodolist)
 router.post('/addtodo',expressJoi(todolist_Schema.settodo),todolist_func.addtodolist)
 router.patch('/cagtodo', expressJoi(todolist_Schema.cagdeltodo),todolist_func.cagtodolist)
 router.patch('/Setting',expressJoi(todolist_Schema.setSetting),todolist_func.setSetting)
+router.post('/histodo',expressJoi(todolist_Schema.getHistodo),todolist_func.getHistodo)
 
 module.exports = router

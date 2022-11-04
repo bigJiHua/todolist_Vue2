@@ -57,10 +57,12 @@ export default {
     }
   },
   methods: {
+    // 复选框选择完成
     checkOk (id) {
       this.checks = !this.checks
       this.$emit('CheckOk', id)
     },
+    // 删除项目
     delItem (item) {
       this.$dialog
         .confirm({
@@ -100,6 +102,7 @@ export default {
           }
         })
     },
+    // 判断项目
     dbcagList (e) {
       if (localStorage.getItem('toChange') === '1') {
         if (this.Cagtodo) {
