@@ -5,7 +5,7 @@
       <van-step v-for="(item,index) in History" :key="index">
         <h3>{{item.todo}}</h3>
         <p>在{{dayjs(parseInt(item.time)).format('YYYY-MM-DD HH:mm:ss')}} -- {{dayjs(parseInt(item.ftime)).format('YYYY-MM-DD HH:mm:ss')}} 完成了</p>
-        <p>累计用时 {{dayjs(parseInt(item.ftime - item.time)).format('HH:mm:ss')}}</p>
+        <p>累计用时 {{dayjs(parseInt(item.ftime - item.time)).format('HH:mm:ss') }} BUG !!!</p>
       </van-step>
     </van-steps>
   </div>
