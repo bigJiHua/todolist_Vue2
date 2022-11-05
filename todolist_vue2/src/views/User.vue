@@ -14,7 +14,7 @@
           <router-link to="Login">点击登录</router-link>
         </li>
       </ul>
-      <!-- 动态、关注、粉丝 -->
+      <!-- 代办 完成 删除 -->
       <div class="user-data">
         <div class="user-data-item">
           <span>{{ Count.finishi }}</span>
@@ -42,13 +42,14 @@
           <van-switch :value="change" size="24" @click="toChange" />
         </template>
       </van-cell>
-      <van-cell icon="warning-o" title="清除本地记录" @click="clearTodoList" />
+      <van-cell icon="delete-o" title="清除本地记录" @click="clearTodoList" />
       <van-cell
         icon="warning-o"
         title="退出登录"
         @click="logout"
         v-if="isLogin"
       />
+      <van-cell icon="notes-o" title="使用手册" @click="notes"/>
     </van-cell-group>
   </div>
 </template>
@@ -138,6 +139,7 @@ export default {
             }
           })
           .catch(() => {
+            this.checked = !this.checked
             localStorage.setItem('Upload', 0)
           })
       } else {
@@ -150,6 +152,7 @@ export default {
             this.Upload()
           })
           .catch(() => {
+            this.checked = !this.checked
             localStorage.setItem('Upload', 1)
           })
       }
@@ -239,6 +242,9 @@ export default {
             localStorage.removeItem('todoList')
           })
       }
+    },
+    notes () {
+      this.$router.push('notes')
     }
   },
   watch: {},

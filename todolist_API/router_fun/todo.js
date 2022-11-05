@@ -92,7 +92,6 @@ exports.addtodolist = (req,res) => {
 exports.cagtodolist = (req,res) => {
     const username = req.body.username
     const todo = JSON.parse(req.body.ctodo)
-    console.log(req.body.ctodo)
     const id = todo.id
     const sql = `select * from ev_users where username=?`
     db.query(sql,username,(err,results)=>{
