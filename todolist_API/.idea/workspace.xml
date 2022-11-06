@@ -4,14 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="373a9777-0c4b-4196-9431-7f756c40cf8c" name="变更" comment="7-13完善登录注册接口">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="373a9777-0c4b-4196-9431-7f756c40cf8c" name="变更" comment="11-6">
       <change beforePath="$PROJECT_DIR$/database/db.js" beforeDir="false" afterPath="$PROJECT_DIR$/database/db.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/router_fun/todo.js" beforeDir="false" afterPath="$PROJECT_DIR$/router_fun/todo.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../todolist_vue2/src/views/History.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../todolist_vue2/src/views/History.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../todolist_vue2/src/views/Home.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../todolist_vue2/src/views/Home.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../todolist_vue2/src/views/Notes.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../todolist_vue2/src/views/Notes.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../todolist_vue2/src/views/User.vue" beforeDir="false" afterPath="$PROJECT_DIR$/../todolist_vue2/src/views/User.vue" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -103,7 +97,7 @@
       <workItem from="1663583855755" duration="79000" />
       <workItem from="1663671473341" duration="50000" />
       <workItem from="1667352176673" duration="2233000" />
-      <workItem from="1667355414421" duration="17147000" />
+      <workItem from="1667355414421" duration="17442000" />
     </task>
     <task id="LOCAL-00001" summary="new API Object">
       <created>1656606843048</created>
@@ -112,7 +106,21 @@
       <option name="project" value="LOCAL" />
       <updated>1656606843048</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="11-6">
+      <created>1667738537678</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1667738537679</updated>
+    </task>
+    <task id="LOCAL-00003" summary="11-6">
+      <created>1667738690580</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1667738690580</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -134,7 +142,8 @@
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <MESSAGE value="new API Object" />
     <MESSAGE value="7-13完善登录注册接口" />
-    <option name="LAST_COMMIT_MESSAGE" value="7-13完善登录注册接口" />
+    <MESSAGE value="11-6" />
+    <option name="LAST_COMMIT_MESSAGE" value="11-6" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
