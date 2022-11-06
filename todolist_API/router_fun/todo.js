@@ -101,14 +101,14 @@ exports.cagtodolist = (req,res) => {
             const sql = `select * from ev_todo where username=? and finishi = 0 and upcoming = 0 and is_delete = 0`
             db.query(sql,username,(err,results)=>{
                 if(err) return res.cc(err)
-                if(results.length < setting.row) {
+                if(results.length < setting.row || todo.is_delete === 1) {
                     const sql = `update ev_todo set ? where username=? and id=?`
                     db.query(sql,[todo,username,id],(err,results)=>{
                         if(err) return res.cc(err)
                         if(results.affectedRows !== 1 ) return res.cc('修改失败,请同步至数据库再进行修改', 406)
                         res.status(200).send({
                             status: 200,
-                            message: '忘记有什么没做嗷... 继续努力嗷! '
+                            message: '别轻易放弃 继续努力嗷! '
                         })
                     })
                 } else {

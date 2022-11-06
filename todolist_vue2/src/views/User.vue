@@ -49,7 +49,7 @@
         @click="logout"
         v-if="isLogin"
       />
-      <van-cell icon="notes-o" title="使用手册" @click="notes"/>
+      <van-cell icon="notes-o" title="功能介绍" @click="notes"/>
     </van-cell-group>
   </div>
 </template>

@@ -52,7 +52,7 @@ export default {
       checks: false,
       isCag: false,
       Cagtodo: false,
-      cagVal: this.item.todo,
+      cagVal: '',
       is_delete: true
     }
   },
@@ -71,6 +71,7 @@ export default {
         .then(async () => {
           item.is_delete = 1
           if (this.$store.state.Login === 1 && localStorage.getItem('token')) {
+            delete item.new
             const { data: res } = await TodosApi.putTodolist(item)
             if (res.status === 200) {
               this.$notify({
@@ -107,6 +108,7 @@ export default {
       if (localStorage.getItem('toChange') === '1') {
         if (this.Cagtodo) {
           this.isCag = !this.isCag
+          this.cagVal = this.item.todo
           const cage = e.target
           document.addEventListener('click', (e) => {
             const ele = e.target
@@ -140,7 +142,7 @@ export default {
     },
     cagList (item) {
       this.isCag = !this.isCag
-      if (item.todo !== this.cagVal) {
+      if (item.todo !== this.cagVal && item.todo !== '') {
         item.todo = this.cagVal.substring(0, 25)
         this.$emit('cagList', item)
       }

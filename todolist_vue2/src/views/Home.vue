@@ -191,18 +191,26 @@ export default {
     },
     // 更改
     async patchList (data) {
-      const { data: res } = await getTodolist.putTodolist(data)
-      if (res.status === 200) {
+      if (data.todo !== '') {
+        const { data: res } = await getTodolist.putTodolist(data)
+        if (res.status === 200) {
+          this.$notify({
+            message: res.message,
+            type: 'success',
+            duration: 1000
+          })
+        } else if (res.status === 202) {
+          this.$notify({
+            message: res.message,
+            type: 'danger',
+            duration: 1000
+          })
+        }
+      } else {
         this.$notify({
-          message: res.message,
-          type: 'success',
-          duration: 1000
-        })
-      } else if (res.status === 202) {
-        this.$notify({
-          message: res.message,
+          message: '修改值为空！',
           type: 'danger',
-          duration: 1000
+          duration: 1300
         })
       }
     },
@@ -280,13 +288,8 @@ export default {
               }
             })
             localStorage.setItem('todoList', JSON.stringify(newDataArry))
-            setTimeout(() => {
-              this.getlist()
-            }, 2200)
           })
-          .catch(() => {
-            this.getlist()
-          })
+        this.toget()
       }
     },
     onRefresh () {
@@ -312,7 +315,9 @@ export default {
       }
     },
     toget () {
-      this.getlist()
+      setTimeout(() => {
+        this.getlist()
+      }, 2200)
     },
     // 统计数据
     CountNum (met) {
@@ -401,8 +406,10 @@ export default {
     },
     // 删除
     async delItem (item) {
+      console.log(item)
       item.is_delete = 1
       if (this.$store.state.Login === 1 && localStorage.getItem('token')) {
+        delete item.new
         const { data: res } = await getTodolist.putTodolist(item)
         if (res.status === 200) {
           this.$notify({
@@ -410,18 +417,12 @@ export default {
             type: 'success',
             duration: 1000
           })
-          setTimeout(() => {
-            this.getlist()
-          }, 2200)
-        } else if (res.status === 406) {
+        } else {
           this.$notify({
             message: res.message,
             type: 'danger',
             duration: 1000
           })
-          setTimeout(() => {
-            this.getlist()
-          }, 2200)
         }
       } else {
         const newDataArry = []
@@ -432,9 +433,6 @@ export default {
           newDataArry.push(ditem)
         })
         localStorage.setItem('todoList', JSON.stringify(newDataArry))
-        setTimeout(() => {
-          this.getlist()
-        }, 500)
       }
     },
     // 恢复
@@ -478,12 +476,11 @@ export default {
             .then(() => {
               JSON.parse(localStorage.getItem('todoList')).forEach((item) => {
                 if (item.is_delete === 0) {
-                  if (item.finishi === 1 || item.upcoming === 1) {
-                    this.delItem(item)
-                  }
+                  this.delItem(item)
                 }
               })
             })
+          this.toget()
         }
       } else {
         this.$notify({

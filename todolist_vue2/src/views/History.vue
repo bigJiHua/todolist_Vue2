@@ -12,8 +12,8 @@
       </van-steps>
     </div>
     <div v-else class="elseBox">
-      <van-skeleton title avatar :row="18" />
-      <p class="Histips"><span>Tips:</span> 空空如也,此功能需要登录才可使用</p>
+      <van-empty description="空空如也,此功能需要登录才可使用" />
+      <router-link to="/Login"><van-button>登录</van-button></router-link>
     </div>
     <a href="#" title="返回顶部" @click="totop"
         ><img
@@ -129,14 +129,7 @@ export default {
 }
 .elseBox{
   margin-top: 20px;
-}
-.Histips{
-  font-size: 1.1rem;
-  margin: 15px;
-  font-weight: bolder;
-  > span{
-    color: red;
-  }
+  text-align: center;
 }
 .top {
   right: 15px;
