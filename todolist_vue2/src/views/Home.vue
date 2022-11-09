@@ -50,7 +50,7 @@
         </div>
       </div>
       <div class="isAllBox" v-else>
-        <van-button @click="AllrecDel('all')">{{AllcheckOk}}</van-button>
+        <van-button @click="AllrecDel('all')">{{ AllcheckOk }}</van-button>
         <van-button @click="AllrecDel('delete')">全部删除</van-button>
       </div>
     </div>
@@ -86,20 +86,25 @@ export default {
   methods: {
     // 获取
     async getlist () {
+      let i = 0
       if (parseInt(localStorage.getItem('Login')) === 1) {
         const { data: res } = await getTodolist.getTodolist()
         if (res.status === 401) {
-          this.$notify({
-            message: '登录过期，当前数据是本地数据',
-            type: 'success',
-            duration: 2200
-          })
-          localStorage.removeItem('Login')
-          localStorage.removeItem('Upload')
-          localStorage.removeItem('toChange')
-          localStorage.removeItem('Count')
-          localStorage.removeItem('token')
-          localStorage.removeItem('Username')
+          this.getlist()
+          i++
+          if (i > 3) {
+            this.$notify({
+              message: '登录过期，当前数据是本地数据',
+              type: 'success',
+              duration: 2200
+            })
+            localStorage.removeItem('Login')
+            localStorage.removeItem('Upload')
+            localStorage.removeItem('toChange')
+            localStorage.removeItem('Count')
+            localStorage.removeItem('token')
+            localStorage.removeItem('Username')
+          }
         } else if (res.status !== 406) {
           this.$notify({
             message: res.message,
@@ -107,16 +112,7 @@ export default {
             duration: 1500
           })
           this.$store.dispatch('CountData', this.Count)
-          const newArryData = res.data
-          JSON.parse(localStorage.getItem('todoList')).forEach((item) => {
-            if (item.new) {
-              newArryData.push(item)
-            }
-          })
-          localStorage.setItem(
-            'todoList',
-            JSON.stringify(newArryData.reverse())
-          )
+          localStorage.setItem('todoList', JSON.stringify(res.data.reverse()))
         } else {
           this.$notify({
             message: '云端空空如也，当前获取的是本地数据',
@@ -445,7 +441,11 @@ export default {
             })
             .then(() => {
               JSON.parse(localStorage.getItem('todoList')).forEach((item) => {
-                if (item.finishi === 0 && item.upcoming === 0 && item.is_delete === 0) {
+                if (
+                  item.finishi === 0 &&
+                  item.upcoming === 0 &&
+                  item.is_delete === 0
+                ) {
                   this.CheckOk(item.id, 'rec')
                 }
               })
