@@ -20,5 +20,5 @@ npm run build
 npm run lint
 ```
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+## 当前改文件已部署
+已部署 请[点击](http://toto.jihau.top)查看.
