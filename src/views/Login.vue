@@ -30,8 +30,8 @@ import PostLogin from '@/components/API/User'
 export default {
   data () {
     return {
-      username: 'JiHua',
-      password: '58239641ok.com',
+      username: '',
+      password: '',
       loading: false,
       show: false,
       msg: '正在登录',
