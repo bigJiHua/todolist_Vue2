@@ -59,11 +59,17 @@ export default {
 * {
   margin: 0;
 }
+
 .RView {
   position: relative;
   height: 89vh;
   padding: 15px;
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.1) 3%, transparent 0),
+    linear-gradient(rgba(18, 14, 14, 0.1) 3%, transparent 0);
+  background-size: 20px 20px;
+
 }
+
 .Footer {
   height: 5vh;
 }

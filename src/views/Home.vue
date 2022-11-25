@@ -476,10 +476,7 @@ export default {
 <style lang="less" scoped>
 .content_body {
   width: 90%;
-  // background-color: hsl(0deg 100% 95% / 40%);
   border-radius: 12px;
-  //box-shadow: 0 0 30px rgb(0 0 0 / 15%);
-  //box-shadow: 0 0 7px rgb(0 0 0 / 10%);;
   border: 0.5px solid black;
   position: absolute;
   padding: 20px 10px;
@@ -493,14 +490,12 @@ export default {
   }
 
   .inputArea {
-    margin: 20px 10px;
+    margin: 20px 6px;
     display: flex;
     justify-content: space-around;
     align-items: center;
     border-radius: 12px;
     border: 1px solid black;
-   // backdrop-filter: blur(50px);
-   // box-shadow: 0 0 6px rgba(255, 206, 206, 0.8);
   }
 
   .Chekbox {

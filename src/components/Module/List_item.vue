@@ -1,16 +1,18 @@
 <template>
   <div class="list_item">
-    <div class="showArea">
-      <input type="checkbox" class="Chekbox" v-model="check" v-if="is_delete" @click="checkOk(item.id)" />
-      <v-touch :class="{ things: !checks, thingOk: checks }" v-on:doubletap="dbcagList($event)" v-if="!isCag">{{
-          item.todo
-      }}</v-touch>
-      <div class="things" v-if="isCag">
-        <input type="text" v-model="cagVal" class="cag" @keydown.enter="cagList(item)" />
+    <div class="AreaBox">
+      <div class="showArea">
+        <input type="checkbox" class="Chekbox" v-model="check" v-if="is_delete" @click="checkOk(item.id)" />
+        <v-touch :class="{ things: !checks, thingOk: checks }" v-on:doubletap="dbcagList($event)" v-if="!isCag">{{
+            item.todo
+        }}</v-touch>
+        <div class="things" v-if="isCag">
+          <input type="text" v-model="cagVal" class="cag" @keydown.enter="cagList(item)" />
+        </div>
+        <span class="del_item" @click="delItem(item)" v-if="is_delete">&times;</span>
       </div>
-      <span class="del_item" @click="delItem(item)" v-if="is_delete">&times;</span>
+      <p class="time">{{ time }}</p>
     </div>
-    <p class="time">{{ time }}</p>
     <div class="hrdel" v-if="checks"></div>
   </div>
 </template>
@@ -186,15 +188,12 @@ export default {
 
 <style lang="less" scoped>
 .list_item {
-  height: 2.5rem;
-  padding: 5px 30px;
+  padding: 20px 30px 5px;
   border-radius: 8px;
   width: 80%;
-  margin: 20px auto 35px;
+  margin: 20px auto ;
   position: relative;
-  backdrop-filter: blur(50px);
-  box-shadow: 0 0 7px rgb(0 0 0 / 36%);;
-  // box-shadow: 0px 2px 8px rgb(0 0 0 / 80%);
+  border: 1px solid rgba(0,0,0,0.8);
 }
 
 .list_item:hover .del_item {
@@ -258,8 +257,10 @@ export default {
   display: none;
 }
 
-.time {
-  margin-top: 8px;
-  float: right;
+.AreaBox {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  align-items: flex-end;
 }
 </style>

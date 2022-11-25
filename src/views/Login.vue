@@ -1,44 +1,21 @@
 <template>
   <div id="logonCon" class="container">
     <div class="login_conten_box">
-      <img
-        class="login_img"
-        src="https://jihau.top/api/public/uploads/undraw_Login_re_4vu2.png"
-      />
+      <img class="login_img" src="https://jihau.top/api/public/uploads/undraw_Login_re_4vu2.png" />
       <div class="user_input_eara">
         <h2>登录 <small>Login</small></h2>
         <form class="form-horizontal">
           <label for="username" class="login_lable"> 用户名:</label>
-          <input
-            id="username"
-            type="text"
-            v-model="username"
-            class="form-control login_input"
-            placeholder="请输入用户名"
-            require
-          /><br />
+          <input id="username" type="text" v-model="username" class="form-control login_input" placeholder="请输入用户名"
+            require /><br />
           <label for="password" class="login_lable"> 密码:</label>
-          <input
-            id="password"
-            type="password"
-            class="form-control login_input"
-            placeholder="请输入密码"
-            required
-            v-model="password"
-            @keydown.enter="login"
-          />
+          <input id="password" type="password" class="form-control login_input" placeholder="请输入密码" required
+            v-model="password" @keydown.enter="login" />
         </form>
         <div class="btnmenu">
           <van-button @click="register" class="Loginbtn">注册</van-button>
-          <van-button @click="login" v-show="!loading" class="Loginbtn"
-            >登录</van-button
-          >
-          <van-button
-            loading
-            type="primary"
-            loading-text="登录中..."
-            v-show="loading"
-          />
+          <van-button @click="login" v-show="!loading" class="Loginbtn">登录</van-button>
+          <van-button loading type="primary" loading-text="登录中..." v-show="loading" />
           <van-button @click="toback" class="Loginbtn">返回</van-button>
         </div>
       </div>
@@ -175,22 +152,9 @@ export default {
 
 <style scoped>
 #logonCon {
-  background-image: linear-gradient(
-    to right top,
-    #caf8ec,
-    #94e1e2,
-    #5ac7df,
-    #18acdf,
-    #008dd9,
-    #5f80dd,
-    #966dd3,
-    #c254b9,
-    #ff5495,
-    #ff7468,
-    #ffa63c,
-    #f6d92a
-  );
+  background-color: rgba(244, 244, 244, 0.4);
 }
+
 * {
   margin: 0;
   padding: 0;
@@ -201,6 +165,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+  overflow: hidden;
 }
 
 @media only screen and (min-width: 755px) {
@@ -208,7 +173,7 @@ export default {
     background-color: rgba(244, 244, 244, 0.4);
     width: 55vw;
     border-radius: 12px;
-    box-shadow: 0 25px 45px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 0px 45px rgba(0, 0, 0, 0.2);
     display: flex;
     justify-content: space-between;
   }
@@ -223,53 +188,22 @@ export default {
     padding: 20px 25px;
   }
 
-  .user_input_eara > h2 {
+  .user_input_eara>h2 {
     margin-bottom: 15px;
     font-weight: bolder;
-    color: rgb(240, 239, 244);
+    color: black;
   }
 
   .login_lable:first-child {
     margin: 10px 0;
   }
 
-  .login_input {
-    margin: 5px 0 20px 0;
-  }
-
-  .user_input_eara > form > [name='button'] {
-    float: right;
-  }
-}
-
-@media only screen and (max-width: 755px) {
-  .login_conten_box {
-    background-color: rgba(244, 244, 244, 0.4);
-    width: 90vw;
-    border-radius: 12px;
-    box-shadow: 0 25px 45px rgba(0, 0, 0, 0.2);
-  }
-  .login_img {
-    display: none;
-  }
-  .user_input_eara {
-    padding: 15px;
-  }
-  .user_input_eara > h2 {
-    margin-bottom: 15px;
-    font-weight: bolder;
-    color: rgb(240, 239, 244);
-  }
-
-  .login_lable:first-child {
-    margin: 10px 0;
-  }
   .login_lable {
     display: inline-block;
     width: 4rem;
-    color: white;
     font-weight: bolder;
   }
+
   .login_input {
     margin: 0 0 25px 0;
     padding: 5px 10px;
@@ -278,14 +212,57 @@ export default {
     height: 1.8rem;
   }
 }
+
+@media only screen and (max-width: 755px) {
+  .login_conten_box {
+    background-color: rgba(244, 244, 244, 0.4);
+    width: 90vw;
+    border-radius: 12px;
+    box-shadow: 0 0 45px rgba(0, 0, 0, 0.2);
+  }
+
+  .login_img {
+    display: none;
+  }
+
+  .user_input_eara {
+    padding: 15px;
+  }
+
+  .user_input_eara>h2 {
+    margin-bottom: 15px;
+    font-weight: bolder;
+  }
+
+  .login_lable:first-child {
+    margin: 10px 0;
+  }
+
+  .login_lable {
+    display: inline-block;
+    width: 4rem;
+    font-weight: bolder;
+  }
+
+  .login_input {
+    margin: 0 0 25px 0;
+    padding: 5px 10px;
+    border-radius: 5px;
+    border: 0;
+    height: 1.8rem;
+  }
+}
+
 .btnmenu {
   display: flex;
   align-items: center;
   justify-content: space-around;
 }
+
 .Loginbtn {
   width: 5rem;
 }
+
 .popup {
   padding: 10px;
 }

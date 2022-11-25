@@ -43,14 +43,11 @@
         </template>
       </van-cell>
       <van-cell icon="delete-o" title="清除本地记录" @click="clearTodoList" />
-      <van-cell
-        icon="warning-o"
-        title="退出登录"
-        @click="logout"
-        v-if="isLogin"
-      />
-      <van-cell icon="notes-o" title="功能介绍" @click="notes"/>
-      <router-link to="/Change" class="toChange"><van-cell icon="setting-o">个性设置</van-cell></router-link>
+      <van-cell icon="warning-o" title="退出登录" @click="logout" v-if="isLogin" />
+      <van-cell icon="notes-o" title="功能介绍" @click="notes" />
+      <router-link to="/Change" class="toChange">
+        <van-cell icon="setting-o">个性设置</van-cell>
+      </router-link>
     </van-cell-group>
   </div>
 </template>
@@ -259,44 +256,52 @@ export default {
 <style lang="less" scoped>
 .user-container {
   .user-card {
-    background: rgb(39, 93, 43);
-    color: white;
+    background-color: rgba(244, 244, 244, 0.4);
+    border-radius: 12px;
+    box-shadow: 0 0 40px rgba(0 0 0 / 36%);
     padding-top: 20px;
+    margin-bottom: 10px;
+
     .van-cell {
       display: flex;
       align-items: center;
       justify-content: flex-start;
-      background: rgb(39, 93, 43);
-      color: white;
+      background-color: none;
       &::after {
         display: none;
       }
+
       .avatar {
         padding: 10px;
-        background-color: #fff;
         border-radius: 50%;
         margin-right: 10px;
+
         img {
           width: 60px;
         }
       }
+
       .username {
         font-size: 1.8rem;
         font-weight: bold;
       }
+
       .li_demo a {
         margin-left: 55px;
-        color: white;
+        color: black;
         font-size: 1.4rem;
+        font-weight: 500;
       }
     }
   }
+
   .user-data {
     display: flex;
     justify-content: space-evenly;
     align-items: center;
     font-size: 14px;
     padding: 30px 0;
+
     .user-data-item {
       display: flex;
       flex-direction: column;
@@ -306,6 +311,13 @@ export default {
     }
   }
 }
+
+.action-card {
+  >div:first-child {
+    border-radius: 12px 0 12px 0;
+  }
+}
+
 .toChange {
   color: black;
 }
