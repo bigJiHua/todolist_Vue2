@@ -44,7 +44,8 @@ export default {
       Count: {
         finishi: this.$store.state.Count.finishi,
         upcoming: this.$store.state.Count.upcoming,
-        is_delete: this.$store.state.Count.is_delete
+        is_delete: this.$store.state.Count.is_delete,
+        Number: 0
       },
       AllcheckOk: '全部完成'
     }
@@ -61,17 +62,22 @@ export default {
       if (parseInt(localStorage.getItem('Login')) === 1) {
         const { data: res } = await getTodolist.getTodolist()
         if (res.status === 401) {
-          this.$notify({
-            message: '登录过期，当前数据是本地数据',
-            type: 'success',
-            duration: 2200
-          })
-          localStorage.removeItem('Login')
-          localStorage.removeItem('Upload')
-          localStorage.removeItem('toChange')
-          localStorage.removeItem('Count')
-          localStorage.removeItem('token')
-          localStorage.removeItem('Username')
+          this.Count.Number++
+          if (this.Count.Number < 4) {
+            this.getlist()
+          } else {
+            this.$notify({
+              message: '登录过期，当前数据是本地数据',
+              type: 'success',
+              duration: 2200
+            })
+            localStorage.removeItem('Login')
+            localStorage.removeItem('Upload')
+            localStorage.removeItem('toChange')
+            localStorage.removeItem('Count')
+            localStorage.removeItem('token')
+            localStorage.removeItem('Username')
+          }
         } else if (res.status !== 406) {
           this.$notify({
             message: res.message,

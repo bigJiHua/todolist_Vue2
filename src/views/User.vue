@@ -5,7 +5,7 @@
       <ul class="van-cell">
         <li class="li_demo avatar">
           <img :src="pic" alt="头像" v-if="pic" />
-          <img src="https://jihau.top/img/logo.png" alt="头像" v-else />
+          <img v-else  src="https://jihau.top/img/logo.png" alt="头像"/>
         </li>
         <li v-if="isLogin" class="li_demo">
           <span class="username">{{ User }}</span>

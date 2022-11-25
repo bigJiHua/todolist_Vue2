@@ -8,10 +8,10 @@ const LoginMenu = function (username, password) {
 
 // 新增用户
 const UpnewUser = function (userdata) {
-  console.log(userdata)
   const params = new URLSearchParams()
   params.append('username', userdata.username)
   params.append('password', userdata.password)
+  params.append('pic', userdata.pic)
   return request.post('/my/reguser', params)
 }
 
