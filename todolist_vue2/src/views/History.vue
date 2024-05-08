@@ -1,10 +1,10 @@
 <template>
-  <div id="HistoryM" class="HistoryM" ref="ScollBox">
-    <div class="HistoryHeader" ref="HisHeader">
+  <div id="HistoryM" class="HistoryM">
+    <div class="HistoryHeader" >
       <h1>代办历史</h1>
       <h3 v-if="is_login">累计完成 {{ History.length }} 件</h3>
     </div>
-    <div v-if="is_login">
+    <div class="DataList" ref="ScollBox" v-if="is_login">
       <van-steps direction="vertical" :active="0">
         <van-step v-for="(item, index) in History" :key="index">
           <historyStep :item = item></historyStep>
@@ -28,26 +28,22 @@
 </template>
 
 <script>
-import getHistory from '@/components/API/getTodoList'
+import getHistory from '@/API/getTodoList'
 import historyStep from '@/components/Module/HistoryStep'
 export default {
   props: [],
   data () {
     return {
       History: [],
-      is_login: parseInt(localStorage.getItem('Login')) === 1
+      is_login: localStorage.getItem('token')
     }
   },
   created () {
-    if (this.History.length === 0) {
+    if (this.is_login) {
       this.getHistory()
     }
   },
   mounted () {
-    const scrollview = this.$refs.ScollBox
-    // 添加滚动监听，该滚动监听了拖拽滚动条
-    // 尾部的 true 最好加上，我这边测试没加 true ，拖拽滚动条无法监听到滚动，加上则可以监听到拖拽滚动条滚动回调
-    scrollview.addEventListener('scroll', this.handleScroll, true)
   },
   methods: {
     async getHistory () {
@@ -55,24 +51,7 @@ export default {
       this.History = res.data
     },
     totop () {
-      this.$refs.ScollBox.scrollTop = 0
-    },
-    handleScroll () {
-      const indexHeader = this.$refs.totop
-      if (indexHeader) {
-        const scrollTop = this.$refs.ScollBox.scrollTop
-        const HisHeader = this.$refs.HisHeader
-        if (scrollTop > 50) {
-          HisHeader.setAttribute('class', 'HisHeader')
-        } else {
-          HisHeader.setAttribute('class', 'HistoryHeader')
-        }
-        if (scrollTop >= 400) {
-          indexHeader.setAttribute('class', 'top')
-        } else if (scrollTop === 0) {
-          indexHeader.setAttribute('class', 'nonetop')
-        }
-      }
+      this.$refs.ScollBox.scrollTop = 50
     }
   },
   watch: {},
@@ -93,10 +72,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.HistoryM{
-  overflow: scroll;
-  scroll-behavior: smooth;
-}
 .HistoryHeader {
   display: flex;
   flex-direction: row;
@@ -105,23 +80,12 @@ export default {
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px black solid;
-  padding-bottom: 8px;
-  > h3 {
-    color: rgb(83, 188, 125);
-  }
-}
-.HisHeader {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  align-content: center;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 1px black solid;
-  padding-bottom: 8px;
+  padding: 10px;
   position: fixed;
-  width: 92.5vw;
   z-index: 99;
+  top: 0;
+  left: 0;
+  width:calc(100vw - 20px);
   background-color: #fff;
   > h3 {
     color: rgb(83, 188, 125);
@@ -142,5 +106,10 @@ export default {
 }
 .nonetop {
   display: none;
+}
+.DataList {
+  margin-top: 50px;
+  height: calc(100vh - 130px);
+  overflow: scroll;
 }
 </style>

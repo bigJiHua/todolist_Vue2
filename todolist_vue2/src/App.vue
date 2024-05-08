@@ -1,7 +1,7 @@
 <template>
   <div id="APP" class="APP">
     <router-view class="RView"></router-view>
-    <FooterBar class="Footer"></FooterBar>
+    <FooterBar/>
   </div>
 </template>
 
@@ -59,12 +59,15 @@ export default {
 * {
   margin: 0;
 }
+#APP {
+  width: 100vw;
+  height: 100vh;
+}
 .RView {
   position: relative;
-  height: 89.5vh;
+  height: calc(100vh - 100px);
   padding: 15px;
-}
-.Footer {
-  height: 5vh;
+  background: linear-gradient(90deg, rgba(0, 0, 0, .1) 3%, transparent 0), linear-gradient(rgba(18, 14, 14, .1) 3%, transparent 0);
+  background-size: 20px 20px;
 }
 </style>

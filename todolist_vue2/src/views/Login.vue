@@ -37,16 +37,15 @@
             loading-text="登录中..."
             v-show="loading"
           />
-          <van-button @click="toback" class="Loginbtn">返回</van-button>
         </div>
       </div>
     </div>
-    <van-popup v-model="show" round class="popup">{{ msg }}</van-popup>
   </div>
 </template>
 
 <script>
-import PostLogin from '@/components/API/User'
+import PostLogin from '@/API/User'
+import { Notify } from 'vant'
 
 export default {
   data () {
@@ -54,7 +53,6 @@ export default {
       username: '',
       password: '',
       loading: false,
-      show: false,
       msg: '正在登录',
       setTime: 2000,
       rules: {
@@ -78,12 +76,8 @@ export default {
           // 验证输入的密码是否合法
           if (this.validata('password')) {
             // 发起请求
-            const { data: res } = await PostLogin.LoginMenu(
-              this.username,
-              this.password
-            )
+            const { data: res } = await PostLogin.LoginMenu(this.username, this.password)
             // 打开开关
-            this.show = true
             this.loading = true
             // 判断返回状态码是否成功
             if (res.status === 200) {
@@ -94,31 +88,22 @@ export default {
               localStorage.setItem('Upload', res.data.upload)
               localStorage.setItem('toChange', res.data.toChange)
               this.$store.commit('Upload', res.data.upload)
-              const timer = setInterval(() => {
-                this.msg = res.message
-              }, 100)
               setTimeout(() => {
-                clearInterval(timer)
-                this.show = false
                 this.loading = false
                 this.$router.push('/')
                 location.reload()
               }, this.setTime)
-            } else {
-              this.showPopup(res.message)
             }
           }
         }
       } else {
         // 打开开关
-        this.show = true
         this.loading = true
         const timer = setInterval(() => {
           this.msg = '已经登录啦！请勿重复提交表单！'
         }, 100)
         setTimeout(() => {
           clearInterval(timer)
-          this.show = false
           this.loading = false
           this.$router.push('/User')
         }, this.setTime)
@@ -126,7 +111,6 @@ export default {
     },
     register () {
       // 打开开关
-      this.show = true
       this.loading = true
       if (localStorage.getItem('token')) {
         const timer = setInterval(() => {
@@ -134,7 +118,6 @@ export default {
         }, 100)
         setTimeout(() => {
           clearInterval(timer)
-          this.show = false
           this.loading = false
           this.$router.push('/User')
         }, this.setTime)
@@ -145,26 +128,11 @@ export default {
     validata (key) {
       let bool = true
       if (!this.rules[key].rule.test(this[key])) {
-        this.show = true
-        this.msg = this.rules[key].msg
+        Notify({ type: 'warning', position: 'top', message: this.rules[key].msg })
         bool = false
         return false
       }
       return bool
-    },
-    showPopup (msg) {
-      const timer = setInterval(() => {
-        this.show = true
-        this.msg = msg
-      }, 100)
-      setTimeout(() => {
-        clearInterval(timer)
-        this.show = false
-        this.loading = false
-      }, this.setTime)
-    },
-    toback () {
-      this.$router.back()
     }
   },
   name: 'LoginPage'
@@ -173,21 +141,7 @@ export default {
 
 <style scoped>
 #logonCon {
-  background-image: linear-gradient(
-    to right top,
-    #caf8ec,
-    #94e1e2,
-    #5ac7df,
-    #18acdf,
-    #008dd9,
-    #5f80dd,
-    #966dd3,
-    #c254b9,
-    #ff5495,
-    #ff7468,
-    #ffa63c,
-    #f6d92a
-  );
+  background-color: #fff;
 }
 * {
   margin: 0;
@@ -224,7 +178,6 @@ export default {
   .user_input_eara > h2 {
     margin-bottom: 15px;
     font-weight: bolder;
-    color: rgb(240, 239, 244);
   }
 
   .login_lable:first-child {
@@ -256,7 +209,6 @@ export default {
   .user_input_eara > h2 {
     margin-bottom: 15px;
     font-weight: bolder;
-    color: rgb(240, 239, 244);
   }
 
   .login_lable:first-child {
@@ -265,7 +217,6 @@ export default {
   .login_lable {
     display: inline-block;
     width: 4rem;
-    color: white;
     font-weight: bolder;
   }
   .login_input {
@@ -279,7 +230,7 @@ export default {
 .btnmenu {
   display: flex;
   align-items: center;
-  justify-content: space-around;
+  justify-content: space-between;
 }
 .Loginbtn {
   width: 5rem;

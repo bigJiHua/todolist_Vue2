@@ -2,8 +2,8 @@
   <div id="" class="">
     <h3>{{ item.todo }}</h3>
     <p>
-      在{{ dayjs(parseInt(item.time)).format('YYYY-MM-DD HH:mm:ss') }} --
-      {{ dayjs(parseInt(item.ftime)).format('YYYY-MM-DD HH:mm:ss') }} 完成了
+      在{{ dayjs(Number(item.time)).format('YYYY-MM-DD') }} --
+      {{ dayjs(Number(item.ftime)).format('YYYY-MM-DD') }} 完成了
     </p>
     <p>累计用时 {{ time }}</p>
   </div>
@@ -28,7 +28,7 @@ export default {
   watch: {},
   computed: {
     time () {
-      const difftime = (this.item.ftime - this.item.time) / 1000
+      const difftime = (Number(this.item.ftime) - Number(this.item.time)) / 1000
       const days = parseInt(difftime / 86400)
       const hours = parseInt(difftime / 3600) - 24 * days
       const minutes = parseInt((difftime % 3600) / 60)

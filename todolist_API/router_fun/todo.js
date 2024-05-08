@@ -1,24 +1,21 @@
 const db = require('../database/db')
-const setting = require('../setting')
+const config = require('../config')
+const ExecuteFunc = require('../Implement/ExecuteFunction')
+const ExecuteFuncData = require('../Implement/ExecuteFunctionData')
 // 获取用户代办
-exports.gettodolist = (req,res) => {
+exports.gettodolist = async (req,res) => {
     const user = req.query.user
-    const sql = `select * from ev_todo where username= ?`
-    db.query(sql,user,(err,results)=>{
-        if(err) return res.cc(err,404)
-        if(results.length === 0 ) return res.status(200).send({
-            status: 406,
-            message: '空空如也'
-        })
-        res.status(200).send({
-            status: 200,
-            data: results,
-            message: '获取成功啦! 距离时间久的记得尽快完成噢!'
-        })
+    const SelectUserToDoListSql = `select * from ev_todo where username= ?`
+    const SelectUserToDoList = await ExecuteFuncData(SelectUserToDoListSql,user)
+    if(SelectUserToDoList.length === 0 ) return res.cc('空空如也',404)
+    res.status(200).send({
+        status: 200,
+        data: SelectUserToDoList,
+        message: '获取成功啦! 距离时间久的记得尽快完成噢!'
     })
 }
-// 设置上传 修改
-exports.setSetting = (req,res) => {
+// 设置是否上传云端
+exports.setSetting = async (req,res) => {
     const user = req.body.username
     const data = {}
     if(req.body.met === 'upload') {
@@ -26,73 +23,62 @@ exports.setSetting = (req,res) => {
     } else if(req.body.met === 'toChange') {
         data.toChange = req.body.settings
     }
-    const sql = `select * from ev_users where username=?`
-    db.query(sql,user,(err,results)=>{
-        if(err) return res.cc(err,404)
-        if(results.length === 0) return res.cc('用户不存在',404)
-        const sql = `update ev_users set ? where username=?`
-        db.query(sql,[data,user],(err,results)=>{
-            if(err) return res.cc(err,404)
-            if(results.affectedRows !== 1) return res.cc('设置失败',506)
-            const sql = `select * from ev_todo where username=?`
-            db.query(sql,user,(err,results)=>{
-                if(err) return res.status(200).send({
-                    status: 200,
-                    message: '设置成功,查条错误',
-                    length: 0,
-                    data: []
-                })
-                if(results.length === 0) return res.status(200).send({
-                    status: 200,
-                    message: '设置成功',
-                    length: setting.row,
-                    data: []
-                })
-                res.status(200).send({
-                    status: 200,
-                    message: '设置成功',
-                    data: results
-                })
-            })
-        })
+    const UpdateUserDataSql = `update ev_users set ? where username=?`
+    const UpdateUserData = await ExecuteFuncData(UpdateUserDataSql,[data,user])
+    if(UpdateUserData.affectedRows !== 1) return res.cc('设置失败',404)
+    const SelectUserDataTodoListSql = `select * from ev_todo where username=?`
+    const SelectUserDataTodoList = await ExecuteFuncData(SelectUserDataTodoListSql,user)
+    if(SelectUserDataTodoList.length === 0) return res.status(200).send({
+        status: 200,
+        message: '设置成功',
+        length: config.row,
+        data: []
+    })
+    res.status(200).send({
+        status: 200,
+        message: '设置成功',
+        data: SelectUserDataTodoList
     })
 }
 // 添加事件
-exports.addtodolist = (req,res) => {
-    const user = req.body.username
-    const data = JSON.parse(req.body.todo)
-    const sql = `select * from ev_users where username=?`
-    db.query(sql,user,(err,results)=> {
-        if (err) return res.cc(err, 404)
-        if (results.length === 0) return res.cc('用户不存在', 404)
-        if (results[0].upload === 1) {
-            const sql = `select * from ev_todo where username=? and finishi = 0 and is_delete=0`
-            db.query(sql,user,(err,results)=>{
-                if (err) return res.cc(err)
-                if (results.length < setting.row) {
-                    const sql = `insert into ev_todo set ?`
-                    db.query(sql,data,(err,results)=>{
-                        if (err) return res.cc(err)
-                        if (results.affectedRows !== 1) return res.cc('添加失败啦，记住代办刷新一下重新添加吧!')
-                        res.status(200).send({
-                            status: 200,
-                            message: '添加成功,记得及时完成噢！'
-                        })
-                    })
-                } else {
-                    return res.cc('云端数据超过限制，无法再上传啦',406)
-                }
-            })
-        } else {
-            return res.cc('用户未打开上传云端，请开通后再试吧')
+exports.addtodolist = async (req,res) => {
+    const user = req.auth.username
+    const data = {
+        username: req.auth.username,
+        todo: req.body.todo,
+        finishi: 0,
+        upcoming: 0,
+        is_delete: 0,
+        time: new Date().getTime()
+    }
+    const CheckUserisUploadSql = `Select upload from ev_users where username = ?`
+    const CheckUserisUpload = await ExecuteFuncData(CheckUserisUploadSql, user)
+    if (CheckUserisUpload.length === 1) {
+        // 获取今日数据
+        const SelectIsTodoListByTodaySql = `SELECT * FROM ev_todo WHERE username = ? AND finishi = 0 AND is_delete = 0 AND DATE(FROM_UNIXTIME(time / 1000)) = CURDATE()`
+        const SelectIsTodoListByToday = await ExecuteFuncData(SelectIsTodoListByTodaySql,user)
+        if (SelectIsTodoListByToday.length < config.row) {
+            //插入数据
+            const InsetUserTodoDataSql = `insert into ev_todo set ?`
+            const InsetUserTodoData = await ExecuteFuncData(InsetUserTodoDataSql, data)
+            if (InsetUserTodoData.affectedRows !== 1) return res.cc('添加失败啦，记住代办刷新一下重新添加吧!')
+        }else {
+            res.cc('代办列表已经满了嗷! 先去把未完成的代办加快速度哟！', 404)
         }
+    } else {
+        return res.cc('用户未打开上传云端，请开通后再试吧')
+    }
+    res.status(200).send({
+        status: 200,
+        message: '添加成功,记得及时完成噢！'
     })
 }
 // 更改所作
 exports.cagtodolist = (req,res) => {
-    const username = req.body.username
+    const username = req.auth.username
     const todo = JSON.parse(req.body.ctodo)
     const id = todo.id
+    delete todo.new
     const sql = `select * from ev_users where username=?`
     db.query(sql,username,(err,results)=>{
         if(err) return res.cc(err)
@@ -101,7 +87,7 @@ exports.cagtodolist = (req,res) => {
             const sql = `select * from ev_todo where username=? and finishi = 0 and upcoming = 0 and is_delete = 0`
             db.query(sql,username,(err,results)=>{
                 if(err) return res.cc(err)
-                if(results.length < setting.row || todo.is_delete === 1) {
+                if(results.length < config.row || todo.is_delete === 1) {
                     const sql = `update ev_todo set ? where username=? and id=?`
                     db.query(sql,[todo,username,id],(err,results)=>{
                         if(err) return res.cc(err)
@@ -135,7 +121,7 @@ exports.cagtodolist = (req,res) => {
 // 获取历史完成
 exports.getHistodo = (req,res) => {
     const username = req.body.username
-    const sql = `select * from ev_todo where username = ? and finishi = 1 or upcoming = 1`
+    const sql = `select * from ev_todo where username = ? and finishi = 1 `
     db.query(sql,username,(err,results) => {
         if (err) return res.cc(err)
         if (results.length === 0) return res.cc('空空如也，快去完成你的第一个任务吧！',206)

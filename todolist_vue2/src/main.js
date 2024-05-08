@@ -20,7 +20,7 @@ Vue.use(Vant)
 Vue.use(Meta)
 Vue.config.productionTip = true
 
-new Vue({
+export const app = new Vue({
   router,
   store,
   render: h => h(App)

@@ -1,4 +1,4 @@
-import request from '../request/request'
+import request from '@/API/request'
 const LoginMenu = function (username, password) {
   const params = new URLSearchParams()
   params.append('username', username)

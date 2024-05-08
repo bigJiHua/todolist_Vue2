@@ -1,14 +1,13 @@
-import request from '../request/request'
+import request from '@/API/request'
 // 获取代办列表
 const getTodolist = function () {
   return request.get('/api/todolist?user=' + localStorage.getItem('Username'))
 }
 // 新增代办列表
 const addTodolist = function (data) {
-  delete data.id
   const Params = new URLSearchParams()
   Params.append('username', localStorage.getItem('Username'))
-  Params.append('todo', JSON.stringify(data))
+  Params.append('todo', data.todo)
   return request.post('/api/addtodo', Params)
 }
 // 修改、完成、删除代办列表

@@ -2,7 +2,7 @@
   <div class="user-container">
     <!-- 用户基本信息面板 -->
     <div class="user-card">
-      <ul class="van-cell">
+      <ul class="UserPanel">
         <li class="li_demo avatar">
           <img :src="pic" alt="头像" v-if="pic" />
           <img src="https://jihau.top/img/logo.png" alt="头像" v-else />
@@ -55,7 +55,7 @@
 </template>
 
 <script>
-import Setting from '@/components/API/getTodoList'
+import Setting from '@/API/getTodoList'
 export default {
   props: [],
   data () {
@@ -257,21 +257,19 @@ export default {
 <style lang="less" scoped>
 .user-container {
   .user-card {
-    background: rgb(39, 93, 43);
+    background: #abababc2;
     color: white;
     padding-top: 20px;
-    .van-cell {
+    .UserPanel {
       display: flex;
       align-items: center;
       justify-content: flex-start;
-      background: rgb(39, 93, 43);
       color: white;
       &::after {
         display: none;
       }
       .avatar {
         padding: 10px;
-        background-color: #fff;
         border-radius: 50%;
         margin-right: 10px;
         img {

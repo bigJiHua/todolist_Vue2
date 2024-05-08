@@ -32,7 +32,7 @@
 </template>
 
 <script>
-import TodosApi from '@/components/API/getTodoList'
+import TodosApi from '@/API/getTodoList'
 export default {
   props: {
     isall: {
@@ -142,9 +142,20 @@ export default {
     },
     cagList (item) {
       this.isCag = !this.isCag
-      if (item.todo !== this.cagVal && item.todo !== '') {
-        item.todo = this.cagVal.substring(0, 25)
-        this.$emit('cagList', item)
+      if (localStorage.getItem('token')) {
+        if (item.todo !== this.cagVal && item.todo !== '') {
+          item.todo = this.cagVal.substring(0, 25)
+          this.$emit('cagList', item)
+        }
+      } else {
+        item.todo = this.cagVal
+        const locData = JSON.parse(localStorage.getItem('todoList'))
+        for (const i in locData) {
+          if (locData[i].id === item.id) {
+            locData[i] = item
+          }
+        }
+        localStorage.setItem('todoList', JSON.stringify(locData))
       }
     }
   },

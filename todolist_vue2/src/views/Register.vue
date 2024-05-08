@@ -55,7 +55,7 @@
 </template>
 
 <script>
-import PostNewUser from '@/components/API/User'
+import PostNewUser from '@/API/User'
 export default {
   data () {
     return {

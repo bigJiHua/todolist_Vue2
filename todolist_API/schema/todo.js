@@ -13,7 +13,6 @@ const met = joi.required()
 // 验证规则对象 - 要做的事
 exports.settodo = {
     body:{
-        username,
         todo
     }
 }

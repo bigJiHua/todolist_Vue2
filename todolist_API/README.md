@@ -18,5 +18,5 @@
 ### config.js
 配置文件
 
-### setting.js
+### config.js
 设置文件

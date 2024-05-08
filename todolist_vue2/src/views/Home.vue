@@ -59,7 +59,7 @@
 
 <script>
 import todolist from '@/components/Module/List_item.vue'
-import getTodolist from '@/components/API/getTodoList'
+import getTodolist from '@/API/getTodoList'
 export default {
   data () {
     return {
@@ -87,7 +87,8 @@ export default {
     // 获取
     async getlist () {
       let i = 0
-      if (parseInt(localStorage.getItem('Login')) === 1) {
+      // 如果登录
+      if (localStorage.getItem('token')) {
         const { data: res } = await getTodolist.getTodolist()
         if (res.status === 401) {
           this.getlist()
@@ -106,24 +107,20 @@ export default {
             localStorage.removeItem('Username')
           }
         } else if (res.status !== 406) {
-          this.$notify({
-            message: res.message,
-            type: 'success',
-            duration: 1500
-          })
           this.$store.dispatch('CountData', this.Count)
           localStorage.setItem('todoList', JSON.stringify(res.data.reverse()))
-        } else {
-          this.$notify({
-            message: '云端空空如也，当前获取的是本地数据',
-            type: 'primary',
-            duration: 1000
-          })
-          this.TodoList =
-            JSON.parse(localStorage.getItem('todoList')) === null
-              ? []
-              : JSON.parse(localStorage.getItem('todoList'))
+          this.CountNum('all')
         }
+      } else {
+        this.$notify({
+          message: '当前获取的是本地数据',
+          type: 'primary',
+          duration: 1000
+        })
+        this.TodoList =
+          JSON.parse(localStorage.getItem('todoList')) === null
+            ? []
+            : JSON.parse(localStorage.getItem('todoList'))
       }
       this.CountNum(localStorage.getItem('met'))
     },
@@ -152,22 +149,12 @@ export default {
           delete todo.new
           const { data: res } = await getTodolist.addTodolist(todo)
           if (res.status === 200) {
-            this.$notify({
-              message: res.message,
-              type: 'success',
-              duration: 1000
-            })
             setTimeout(() => {
               this.getlist()
             }, 1000)
-          } else if (res.status === 406) {
-            this.$notify({
-              message: res.message,
-              type: 'danger',
-              duration: 1000
-            })
           }
         } else {
+          // 未开启云上
           this.TodoList.push(todo)
           this.$notify({
             message: '添加成功',
@@ -179,7 +166,7 @@ export default {
         this.newTodo = ''
       } else {
         this.$notify({
-          message: '輸入的值不能爲空哦！',
+          message: '輸入的值不能为空哦！',
           type: 'danger',
           duration: 1000
         })
@@ -190,17 +177,9 @@ export default {
       if (data.todo !== '') {
         const { data: res } = await getTodolist.putTodolist(data)
         if (res.status === 200) {
-          this.$notify({
-            message: res.message,
-            type: 'success',
-            duration: 1000
-          })
-        } else if (res.status === 202) {
-          this.$notify({
-            message: res.message,
-            type: 'danger',
-            duration: 1000
-          })
+          setTimeout(() => {
+            this.getlist()
+          }, 1000)
         }
       } else {
         this.$notify({
